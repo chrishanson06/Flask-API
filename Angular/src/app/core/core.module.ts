@@ -16,11 +16,15 @@ import { MatListModule } from '@angular/material/list';
 import { LandingComponent } from './landing/landing.component';
 import { AuthModule } from '../auth/auth.module';
 import { FileService } from './services/file.service';
+import { SearchComponent } from './search/search.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
 @NgModule({
-	declarations: [NavComponent, LandingComponent],
+	declarations: [NavComponent, LandingComponent, SearchComponent],
 	imports: [
 		CommonModule,
 		RouterModule,
@@ -34,7 +38,11 @@ import { FileService } from './services/file.service';
 		MatButtonModule,
 		MatSidenavModule,
 		MatIconModule,
-		MatListModule
+		MatListModule,
+		
+		ReactiveFormsModule,
+		MatFormFieldModule,
+		MatInputModule
 	],
 	providers: [
 		FileService

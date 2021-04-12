@@ -29,6 +29,11 @@ div#sidenav-button {
 	z-index: 999;
 }
 
+div#search {
+	display: grid;
+	place-content: center;
+}
+
 div#sidenav-wrapper {
 	display: flex;
 	flex-direction: column;
