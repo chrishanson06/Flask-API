@@ -20,6 +20,7 @@ import { SearchComponent } from './search/search.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ProductModule } from '../product/product.module';
 
 
 
@@ -33,6 +34,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 		HttpClientModule,
 
 		AuthModule,
+		ProductModule,
 
 		MatToolbarModule,
 		MatButtonModule,

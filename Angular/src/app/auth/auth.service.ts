@@ -27,6 +27,10 @@ export class AuthService {
 	constructor(private http: HttpClient) {
 		this.userSubject = new BehaviorSubject<User | null>(null);
 		this.user$ = this.userSubject.asObservable();
+		const cachedUser = localStorage.getItem('user')
+		if (cachedUser) {
+			this.setUser(JSON.parse(cachedUser));
+		}
 		this.refresh().toPromise().then(tokens => {
 			this.setTokens(tokens.accessToken);
 			this.getUser().toPromise().then(res => {
@@ -87,8 +91,6 @@ export class AuthService {
 		}
 	}
 
-
-
 	public getUser(): Observable<User> {
 		const accessToken = localStorage.getItem('accessToken');
 		if (accessToken) {
@@ -121,6 +123,7 @@ export class AuthService {
 
 	public setUser(user: User | null): void {
 		this.userSubject.next(user);
+		localStorage.setItem('user', JSON.stringify(user));
 	}
 
 }
