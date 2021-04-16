@@ -15,7 +15,6 @@ class ProductsApi(Resource):
 	'''
 	Get all products according to search criteria
 	'''
-	@jwt_required()
 	def get(self):
 		products = Product.objects
 		return jsonify(products)

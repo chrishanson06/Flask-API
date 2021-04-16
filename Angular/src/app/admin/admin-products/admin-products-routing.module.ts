@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AllProductsComponent } from 'src/app/product/all-products/all-products.component';
+import { AllProductsComponent } from './all-products/all-products.component';
 import { EditProductComponent } from './edit-product/edit-product.component';
 import { NewProductComponent } from './new-product/new-product.component';
 
