@@ -19,7 +19,7 @@ export class NewProductComponent implements OnInit {
 			slug: new FormControl('', [Validators.required]),
 			featured: new FormControl(''),
 			price: new FormControl('0.00', [Validators.required])
-		})
+		});
 	}
 
 	ngOnInit(): void {
@@ -36,9 +36,9 @@ export class NewProductComponent implements OnInit {
 				slug: this.productGroup.get('slug')?.value,
 				featured: this.productGroup.get('featured')?.value,
 				price: this.productGroup.get('price')?.value,
-			}
+			};
 			this.productService.addProduct(product).toPromise().then(res => {
-				this.router.navigate(['/admin'])
+				this.router.navigate(['/admin']);
 			});
 		}
 	}

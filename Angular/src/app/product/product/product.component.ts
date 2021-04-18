@@ -27,7 +27,7 @@ export class ProductComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		if (!this.product) {
 			this.subs.push(this.route.params.subscribe((params: Params) => {
-				this.slug = params['slug'];
+				this.slug = params.slug;
 			}));
 		}
 	}

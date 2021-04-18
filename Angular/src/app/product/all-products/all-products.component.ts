@@ -22,6 +22,6 @@ export class AllProductsComponent implements OnInit {
 		});
 	}
 
-	
+
 
 }

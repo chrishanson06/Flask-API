@@ -27,7 +27,7 @@ export class AuthService {
 	constructor(private http: HttpClient) {
 		this.userSubject = new BehaviorSubject<User | null>(null);
 		this.user$ = this.userSubject.asObservable();
-		const cachedUser = localStorage.getItem('user')
+		const cachedUser = localStorage.getItem('user');
 		if (cachedUser) {
 			this.setUser(JSON.parse(cachedUser));
 		}

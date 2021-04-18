@@ -41,7 +41,7 @@ import { ProductModule } from '../product/product.module';
 		MatSidenavModule,
 		MatIconModule,
 		MatListModule,
-		
+
 		ReactiveFormsModule,
 		MatFormFieldModule,
 		MatInputModule
