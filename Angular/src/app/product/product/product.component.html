@@ -10,6 +10,7 @@
 		Product description
 	</mat-card-content>
 	<mat-card-actions>
-		<button mat-raised-button [color]="color" [routerLink]="['/product', product.slug]">Buy</button>
+		<button mat-raised-button [color]="color" (click)="addToCart(product)">Buy</button>
+		<!-- <button mat-raised-button [color]="color" [routerLink]="['/product', product.slug]">Buy</button> -->
 	</mat-card-actions>
 </mat-card>

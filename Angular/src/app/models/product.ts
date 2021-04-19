@@ -1,6 +1,7 @@
 import { Review } from './review';
 
 export interface Product {
+	id?: string;
 	name?: string;
 	slug?: string;
 	date_created?: Date;

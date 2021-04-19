@@ -5,6 +5,7 @@ API Endpoints
 from .auth import SignupApi, LoginApi, ForgotPassword, ResetPassword, TokenRefresh, CheckPassword, UserApi
 from .product import ProductsApi, ProductApi
 from .file import UploaderApi, MediaApi, SingleMediaApi
+from .cart import CartApi
 
 from .stripe import PaymentIntentApi
 
@@ -25,6 +26,8 @@ def initialize_routes(api, base):
 	api.add_resource(UploaderApi, base + 'file/uploader')
 	api.add_resource(MediaApi, base + 'file/media')
 	api.add_resource(SingleMediaApi, base + 'file/media/<filename>')
+
+	api.add_resource(CartApi, base + 'cart/cart')
 
 	api.add_resource(PaymentIntentApi, base + 'payment/paymentIntent')
 

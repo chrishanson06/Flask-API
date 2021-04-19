@@ -13,6 +13,7 @@ class User(db.Document):
 	password = db.StringField(required=True, min_length=6)
 	salt = db.StringField()
 	admin = db.BooleanField()
+	cart = db.ListField(db.ReferenceField('Product'))
 
 	def hash_password(self):
 		if not self.salt:
@@ -62,6 +63,12 @@ class Product(db.Document):
 	dimensionUnits = db.StringField()
 	virtual = db.BooleanField()
 	reviews = db.ListField(db.ReferenceField('Review'), reverse_delete_rule=db.PULL)
+
+	def serialize(self):
+		return {
+			'id': str(self.pk),
+			'name': self.name
+		}
 
 class Review(db.Document):
 	reviewer = db.ReferenceField('User')

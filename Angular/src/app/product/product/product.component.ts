@@ -2,6 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Product } from 'src/app/models/product';
+import { CartService } from 'src/app/payment/cart/cart.service';
 
 @Component({
 	selector: 'app-product',
@@ -17,7 +18,7 @@ export class ProductComponent implements OnInit, OnDestroy {
 
 	private subs: Subscription[];
 
-	constructor(private route: ActivatedRoute) {
+	constructor(private route: ActivatedRoute, private cartService: CartService) {
 		this.color = '';
 		this.product = null;
 		this.slug = '';
@@ -34,6 +35,10 @@ export class ProductComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy() {
 		this.subs.forEach(sub => sub.unsubscribe());
+	}
+
+	addToCart(product: Product) {
+		this.cartService.addToCart(product);
 	}
 
 }

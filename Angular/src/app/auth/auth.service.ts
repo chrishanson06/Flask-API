@@ -20,9 +20,9 @@ export class AuthService {
 
 	public user$: Observable<User | null>;
 
-	private readonly authBase = environment.apiServer + 'auth/';
-
 	private userSubject: BehaviorSubject<User | null>;
+
+	private readonly authBase = environment.apiServer + 'auth/';
 
 	constructor(private http: HttpClient) {
 		this.userSubject = new BehaviorSubject<User | null>(null);

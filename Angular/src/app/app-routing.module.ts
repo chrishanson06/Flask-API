@@ -24,9 +24,14 @@ const routes: Routes = [
 		loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
 		canActivate: [AuthGuard, AdminGuard]
 	},
+	
+	{
+		path: 'cart',
+		loadChildren: () => import('./payment/cart/cart.module').then(m => m.CartModule)
+	},
 	{
 		path: 'checkout',
-		loadChildren: () => import('./checkout/checkout.module').then(m => m.CheckoutModule)
+		loadChildren: () => import('./payment/checkout/checkout.module').then(m => m.CheckoutModule)
 	}
 ];
 

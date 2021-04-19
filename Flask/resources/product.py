@@ -17,7 +17,8 @@ class ProductsApi(Resource):
 	'''
 	def get(self):
 		products = Product.objects
-		return jsonify(products)
+		mappedProducts = list(map(lambda p: p.serialize(), products))
+		return jsonify(mappedProducts)
 	'''
 	Add new product
 	'''
@@ -40,6 +41,12 @@ class ProductsApi(Resource):
 
 
 class ProductApi(Resource):
+	'''
+	Get the product
+	'''
+	def get(self, id):
+		product = Product.objects.get(id=id)
+		return jsonify(product.serialize())
 	'''
 	Update product
 	'''

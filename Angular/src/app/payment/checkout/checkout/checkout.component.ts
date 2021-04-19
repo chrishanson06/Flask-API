@@ -19,7 +19,7 @@ export class CheckoutComponent implements OnInit {
 
 	constructor(private http: HttpClient) {
 		// Change this on your end
-		this.stripe = Stripe('pk_test_51IhjdIGRCaAvu4C0Vgoif76YwIwRb3ah3IQufMIgoYn5yXfzcfjR3Vek30TdGxjieJjp1InJ79QKnb3nl83f1YUo00vwi7ABJk');
+		this.stripe = Stripe(environment.stripeKey);
 		this.products = [{ 'sku': 'test', 'quantity': 1 }];
 		this.intent = null;
 	}
