@@ -44,6 +44,9 @@ export class CartService {
 				if (cart[i].id === product.id) {
 					flag = true;
 					cart[i].qty -= qty;
+					if (cart[i].qty <= 0) {
+						cart.splice(i, 1);
+					}
 				}
 			}
 			if (!flag) {
