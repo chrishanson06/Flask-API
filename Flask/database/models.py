@@ -8,12 +8,22 @@ from flask_bcrypt import generate_password_hash, check_password_hash
 from datetime import datetime
 import random, string
 
+class CartItem(db.EmbeddedDocument):
+	product = db.ReferenceField('Product')
+	qty = db.IntField()
+
+	def serialize(self):
+		return {
+			'product': self.product.serialize(),
+			'qty': self.qty
+		}
+
 class User(db.Document):
 	email = db.EmailField(required=True, unique=True)
 	password = db.StringField(required=True, min_length=6)
 	salt = db.StringField()
 	admin = db.BooleanField()
-	cart = db.ListField(db.ReferenceField('Product'))
+	cart = db.ListField(db.EmbeddedDocumentField('CartItem'))
 
 	def hash_password(self):
 		if not self.salt:
@@ -26,9 +36,11 @@ class User(db.Document):
 		return check_password_hash(self.password, password + self.salt)
 
 	def serialize(self):
+		mappedCart = list(map(lambda c: c.serialize(), self.cart))
 		return {
 			'email': self.email,
 			'admin': True if self.admin else False,
+			'cart': mappedCart
 		}
 
 class Product(db.Document):

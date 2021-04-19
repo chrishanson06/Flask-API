@@ -37,7 +37,6 @@ export class NavComponent {
 	constructor(private breakpointObserver: BreakpointObserver, private auth: AuthService, private router: Router) {
 		this.user = null;
 		this.auth.user$.subscribe(user => {
-			console.log(user);
 			this.user = user;
 		});
 		this.links = [];

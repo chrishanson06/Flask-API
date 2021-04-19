@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { CartItem } from 'src/app/models/cart-item';
 import { Product } from 'src/app/models/product';
+import { ProductCartItem } from 'src/app/models/product-cart-item';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -19,18 +20,19 @@ export class CartService {
 		this.cart$ = this.cartSubject.asObservable();
 	}
 
-	public async getCart(): Promise<Product[]> {
+	public async getCart(): Promise<ProductCartItem[]> {
 		const accessToken = localStorage.getItem('accessToken');
 		if (accessToken) {
 			const headers = new HttpHeaders().append('Authorization', 'Bearer ' + accessToken).append('Accept', 'application/json');
-			return this.http.get<Product[]>(environment.apiServer + 'cart/cart', { headers }).toPromise();
+			return this.http.get<ProductCartItem[]>(environment.apiServer + 'cart/cart', { headers }).toPromise();
 		} else {
 			const cart = this.getLocalCart();
-			const mappedCart: Product[] = [];
+			const mappedCart: ProductCartItem[] = new Array(cart.length).fill({});
 			for (let i = 0; i < cart.length; i++) {
 				await this.http.get(environment.apiServer + 'product/product/' + cart[i].id).toPromise().then(product => {
-					mappedCart[i] = product;
-				})
+					mappedCart[i].product = product;
+					mappedCart[i].qty = cart[i].qty;
+				});
 			}
 			return mappedCart;
 		}
@@ -59,7 +61,7 @@ export class CartService {
 			const accessToken = localStorage.getItem('accessToken');
 			if (accessToken) {
 				const headers = new HttpHeaders().append('Authorization', 'Bearer ' + accessToken);
-				this.http.put<string>(environment.apiServer + 'cart/cart', cart, { headers });
+				this.http.put<string>(environment.apiServer + 'cart/cart', cart, { headers }).toPromise();
 			}
 		}
 	}
@@ -84,7 +86,7 @@ export class CartService {
 			const accessToken = localStorage.getItem('accessToken');
 			if (accessToken) {
 				const headers = new HttpHeaders().append('Authorization', 'Bearer ' + accessToken);
-				this.http.put<string>(environment.apiServer + 'cart/cart', cart, { headers });
+				this.http.put<string>(environment.apiServer + 'cart/cart', cart, { headers }).toPromise();
 			}
 		}
 	}

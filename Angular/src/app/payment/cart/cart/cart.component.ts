@@ -1,6 +1,9 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { CartItem } from 'src/app/models/cart-item';
 import { Product } from 'src/app/models/product';
+import { ProductCartItem } from 'src/app/models/product-cart-item';
+import { environment } from 'src/environments/environment';
 import { CartService } from '../cart.service';
 
 interface CartProduct {
@@ -17,36 +20,56 @@ export class CartComponent implements OnInit {
 
 	@Input() appearance: string;
 
-	products: CartProduct[];
+	products: ProductCartItem[];
 	cartSize: number;
 
-	constructor(private cartService: CartService) {
-		this.appearance = ''
+	private firstPass: boolean;
+
+	constructor(private cartService: CartService, private http: HttpClient) {
+		this.appearance = '';
 		this.products = [];
 		this.cartSize = 0;
+		this.firstPass = true;
 	}
 
 	ngOnInit(): void {
-		this.cartService.cart$.subscribe(cart => {
+		this.cartService.cart$.subscribe(async cart => {
 			this.cartSize = 0;
-			this.products = new Array(this.cartService.getLocalCart().length).fill({ product: '', qty: 0 });
 			for (let i = 0; i < cart.length; i++) {
 				this.cartSize += cart[i].qty;
-				this.products[i].qty = cart[i].qty
 			}
-			this.cartService.getCart().then(products => {
-				for (let i = 0; i < products.length; i++) {
-					this.products[i].product = products[i];
-				}
-			})
+			if (this.firstPass) {
+				this.firstPass = false;
+				const builtLocalStorage: CartItem[] = [];
+				this.cartService.getCart().then(products => {
+					if (products) {
+						this.products = new Array(products.length).fill({ product: '', qty: 0 });
+						for (let i = 0; i < products.length; i++) {
+							this.products[i].product = products[i].product;
+							this.products[i].qty = products[i].qty;
+							const id = this.products[i].product.id;
+							if (id) {
+								builtLocalStorage.push({ id, qty: this.products[i].qty });
+							}
+						}
+						localStorage.setItem('cart', JSON.stringify(builtLocalStorage));
+					}
+				});
+			} else {
+				const cart = this.cartService.getLocalCart();
+				this.products = new Array(cart.length).fill({ product: '', qty: 0 });
+				for (let i = 0; i < cart.length; i++) {
+					await this.http.get(environment.apiServer + 'product/product/' + cart[i].id).toPromise().then(product => {
+						this.products[i].product = product;
+						this.products[i].qty = cart[i].qty;
+				});
+			}
+			}
 		});
 	}
 
-	private idToProduct(item: CartItem) {
-		return { id: item.id };
-	}
-
-	reduceProduct(product: Product): void {
+	reduceProduct(product: Product, event: any): void {
+		event.stopPropagation();
 		this.cartService.removeFromCart(product, 1);
 	}
 

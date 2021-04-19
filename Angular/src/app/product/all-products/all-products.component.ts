@@ -17,7 +17,6 @@ export class AllProductsComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.productService.getAllProducts().toPromise().then(products => {
-			console.log(products);
 			this.products = products;
 		});
 	}

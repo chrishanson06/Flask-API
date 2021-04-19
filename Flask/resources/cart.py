@@ -9,7 +9,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from mongoengine.errors import FieldDoesNotExist, NotUniqueError, DoesNotExist, ValidationError, InvalidQueryError
 from resources.errors import SchemaValidationError, InternalServerError, UnauthorizedError
 
-from database.models import User, Product
+from database.models import User, Product, CartItem
 
 
 
@@ -28,5 +28,15 @@ class CartApi(Resource):
 	@jwt_required()
 	def put(self):
 		user = User.objects.get(id=get_jwt_identity())
-		print(request.get_json())
+		pairs = request.get_json()
+		cart = [None] * len(pairs)
+		for i in range(0, len(pairs)):
+			product = Product.objects.get(id=pairs[i]['id'])
+			qty = pairs[i]['qty']
+			cart[i] = {
+				'product': product,
+				'qty': qty
+			}
+		user.update(cart=cart)
+		user.save()
 		return 'ok', 200
