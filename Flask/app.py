@@ -16,7 +16,13 @@ from flask_restful_swagger import swagger
 from database.db import initialize_db
 from resources.errors import errors
 
+import stripe
+
 import os
+
+from secret import stripe_sk # For safety
+
+stripe.api_key = stripe_sk # Use your stripe secret key here
 
 PRODUCTION = False
 

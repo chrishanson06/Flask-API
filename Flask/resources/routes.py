@@ -6,6 +6,8 @@ from .auth import SignupApi, LoginApi, ForgotPassword, ResetPassword, TokenRefre
 from .product import ProductsApi, ProductApi
 from .file import UploaderApi, MediaApi, SingleMediaApi
 
+from .stripe import PaymentIntentApi
+
 from .admin import AdminApi, AdminUsersApi, AdminUserApi
 
 def initialize_routes(api, base):
@@ -23,6 +25,8 @@ def initialize_routes(api, base):
 	api.add_resource(UploaderApi, base + 'file/uploader')
 	api.add_resource(MediaApi, base + 'file/media')
 	api.add_resource(SingleMediaApi, base + 'file/media/<filename>')
+
+	api.add_resource(PaymentIntentApi, base + 'payment/paymentIntent')
 
 	api.add_resource(AdminApi, base + 'admin/admin')
 	api.add_resource(AdminUsersApi, base + 'admin/users')
