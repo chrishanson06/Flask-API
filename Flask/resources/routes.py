@@ -7,7 +7,7 @@ from .product import ProductsApi, ProductApi
 from .file import UploaderApi, MediaApi, SingleMediaApi
 from .cart import CartApi
 
-from .stripe import PaymentIntentApi
+from .stripe import PaymentIntentApi, StripeApi
 
 from .admin import AdminApi, AdminUsersApi, AdminUserApi
 
@@ -30,6 +30,7 @@ def initialize_routes(api, base):
 	api.add_resource(CartApi, base + 'cart/cart')
 
 	api.add_resource(PaymentIntentApi, base + 'payment/paymentIntent')
+	api.add_resource(StripeApi, base + 'payment/stripe')
 
 	api.add_resource(AdminApi, base + 'admin/admin')
 	api.add_resource(AdminUsersApi, base + 'admin/users')
