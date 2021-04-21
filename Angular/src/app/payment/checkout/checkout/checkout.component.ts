@@ -81,7 +81,7 @@ export class CheckoutComponent implements OnInit {
 				payment_method: {
 					card: card
 				}
-			}).then(function (result) {
+			}).then(function (result: any) {
 				if (result.error) {
 					// Show error to your customer
 					console.log('fail');

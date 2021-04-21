@@ -48,12 +48,12 @@ class PaymentIntentApi(Resource):
 
 class StripeApi(Resource):
 	def post(self):
-		payload = request.body
+		payload = request.get_json()
 		event = None
 
 		try:
 			event = stripe.Event.construct_from(
-				json.loads(payload), stripe.api_key
+				payload, stripe.api_key
 			)
 		except ValueError:
 			return '', 400
