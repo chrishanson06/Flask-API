@@ -4,7 +4,8 @@ import { environment } from 'src/environments/environment';
 import { CartService } from '../../cart/cart.service';
 
 interface Intent {
-	clientSecret: string;
+	clientSecret?: string;
+	hosted_url?: string;
 }
 
 @Component({
@@ -16,22 +17,24 @@ export class CheckoutComponent implements OnInit {
 
 	stripe: stripe.Stripe;
 	products: any[]
-	intent: Intent | null;
+	stripeIntent: Intent | null;
+	coinbaseIntent: Intent | null;
 
 	constructor(private http: HttpClient, private cartService: CartService) {
 		// Change this on your end
 		this.stripe = Stripe(environment.stripeKey);
 		this.products = [{ 'sku': 'test', 'quantity': 1 }];
-		this.intent = null;
+		this.stripeIntent = null;
+		this.coinbaseIntent = null;
 	}
 
 	ngOnInit(): void {
 		const headers = new HttpHeaders().append('Content-Type', 'application/json');
 		
 		this.cartService.getCart().then(cart => {
-			this.http.post<Intent>(environment.apiServer + 'payment/paymentIntent', JSON.stringify(cart), { headers })
+			this.http.post<Intent>(environment.apiServer + 'payment/stripePaymentIntent', JSON.stringify(cart), { headers })
 			.toPromise().then(intent => {
-				this.intent = intent;
+				this.stripeIntent = intent;
 				const elements = this.stripe.elements();
 				const style = {
 					base: {
@@ -67,10 +70,16 @@ export class CheckoutComponent implements OnInit {
 					form.addEventListener('submit', function(event) {
 						event.preventDefault();
 						// Complete payment when the submit button is clicked
-						self.payWithCard(self.stripe, card, self.intent?.clientSecret);
+						self.payWithCard(self.stripe, card, self.stripeIntent?.clientSecret);
 					});
 				}
-			});	
+			});
+
+			this.http.post<Intent>(environment.apiServer + 'payment/coinbasePaymentIntent', JSON.stringify(cart), { headers })
+			.toPromise().then(intent => {
+				console.log(intent);
+				this.coinbaseIntent = intent;
+		});
 		});
 	}
 

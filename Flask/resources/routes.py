@@ -6,6 +6,7 @@ from .auth import SignupApi, LoginApi, ForgotPassword, ResetPassword, TokenRefre
 from .file import UploaderApi, MediaApi, SingleMediaApi
 from .cart import CartApi
 
+from .coinbase import CoinbaseChargeApi, CoinbaseWebhookApi
 from .stripe import PaymentIntentApi, StripeApi
 
 from .product import ProductsApi, ProductApi
@@ -40,5 +41,7 @@ def initialize_routes(api, base):
 	api.add_resource(AdminUsersApi, base + 'admin/users')
 	api.add_resource(AdminUserApi, base + 'admin/user/<id>')
 
-	api.add_resource(PaymentIntentApi, base + 'payment/paymentIntent')
+	api.add_resource(PaymentIntentApi, base + 'payment/stripePaymentIntent')
 	api.add_resource(StripeApi, base + 'payment/stripe')
+	api.add_resource(CoinbaseChargeApi, base + 'payment/coinbasePaymentIntent')
+	api.add_resource(CoinbaseWebhookApi, base + 'payment/coinbase')

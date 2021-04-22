@@ -10,21 +10,12 @@ from resources.errors import InternalServerError
 
 from database.models import Product
 
+from resources.utils import calculate_order_amount
+
 import json
 import os
 
 import stripe
-
-def calculate_order_amount(items):
-	total = 0
-	for item in items:
-		try:
-			product = Product.objects.get(id=item['product']['id'])
-			total += float(product.price) * item['qty']
-		except Exception:
-			# Product does not exist
-			continue
-	return int(total * 100)
 
 class PaymentIntentApi(Resource):
 	'''
@@ -70,4 +61,4 @@ class StripeApi(Resource):
 		else:
 			print('Unhandled event type {}'.format(event.type))
 
-		return '', 200
+		return 'ok', 200
