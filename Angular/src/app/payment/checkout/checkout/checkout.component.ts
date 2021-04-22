@@ -64,13 +64,12 @@ export class CheckoutComponent implements OnInit {
 						cardError.textContent = event.error ? event.error.message ? event.error.message : null : '';
 					}
 				});
-				const self = this;
 				const form = document.getElementById('payment-form');
 				if (form) {
-					form.addEventListener('submit', function(event) {
+					form.addEventListener('submit', event => {
 						event.preventDefault();
 						// Complete payment when the submit button is clicked
-						self.payWithCard(self.stripe, card, self.stripeIntent?.clientSecret);
+						this.payWithCard(this.stripe, card, this.stripeIntent?.clientSecret);
 					});
 				}
 			});
