@@ -1,0 +1,16 @@
+<form [formGroup]="productGroup" (ngSubmit)="submit()">
+	<mat-form-field appearance="fill">
+		<mat-label>Name</mat-label>
+		<input matInput formControlName="name" (change)="calcSlug()" />
+	</mat-form-field>
+	<mat-form-field appearance="fill">
+		<mat-label>Slug</mat-label>
+		<input matInput formControlName="slug" />
+	</mat-form-field>
+	<mat-checkbox color="primary" formControlName="featured">Featured</mat-checkbox>
+	<mat-form-field appearance="fill">
+		<mat-label>Price</mat-label>
+		<input matInput formControlName="price" />
+	</mat-form-field>
+	<button mat-raised-button color="primary" type="submit">Add</button>
+</form>

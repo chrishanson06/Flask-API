@@ -7,19 +7,23 @@ from flask_bcrypt import generate_password_hash, check_password_hash
 
 import random, string
 
-class Card(db.Document):
-	name = db.StringField()
-	content = db.StringField()
-	width = db.IntField()
-	height = db.IntField()
-	owner = db.ReferenceField('User')
+class CartItem(db.EmbeddedDocument):
+	product = db.ReferenceField('Product')
+	qty = db.IntField()
+
+	def serialize(self):
+		return {
+			'product': self.product.serialize(),
+			'qty': self.qty
+		}
 
 class User(db.Document):
 	email = db.EmailField(required=True, unique=True)
 	password = db.StringField(required=True, min_length=6)
 	salt = db.StringField()
 	admin = db.BooleanField()
-	cards = db.ListField(db.ReferenceField('Card', reverse_delete_rule=db.PULL))
+
+	cart = db.ListField(db.EmbeddedDocumentField('CartItem'))
 
 	def hash_password(self):
 		chars = string.ascii_letters + string.punctuation
@@ -30,11 +34,30 @@ class User(db.Document):
 	def check_password(self, password):
 		return check_password_hash(self.password, password + self.salt)
 
-	def getPasswordLess(self):
+	def serialize(self):
+		mappedCart = list(map(lambda c: c.serialize(), self.cart))
 		return {
+			'id': str(self.pk),
 			'email': self.email,
 			'admin': True if self.admin else False,
-			'cards': self.cards if self.cards else []
+			'cart': mappedCart
 		}
 
-User.register_delete_rule(Card, 'owner', db.CASCADE)
+class Product(db.Document):
+	name = db.StringField()
+	slug = db.StringField(unique=True)
+	description = db.StringField()
+	short_description = db.StringField()
+	sku = db.StringField()
+	price = db.DecimalField(precision=2)
+
+	def serialize(self):
+		return {
+			'id': str(self.pk),
+			'name': self.name,
+			'slug': self.slug,
+			'description': self.description,
+			'shortDescription': self.shortDescription,
+			'sku': self.sku,
+			'price': float(self.price)
+		}
