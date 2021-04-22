@@ -16,6 +16,8 @@ from flask_restful_swagger import swagger
 from database.db import initialize_db
 from resources.errors import errors
 
+import stripe
+
 import os
 
 import stripe

@@ -20,9 +20,9 @@ export class AuthService {
 
 	public user$: Observable<User | null>;
 
-	private readonly authBase = environment.apiServer + 'auth/';
-
 	private userSubject: BehaviorSubject<User | null>;
+
+	private readonly authBase = environment.apiServer + 'auth/';
 
 	constructor(private http: HttpClient) {
 		this.userSubject = new BehaviorSubject<User | null>(null);
@@ -90,8 +90,6 @@ export class AuthService {
 			localStorage.setItem('refreshToken', refreshToken);
 		}
 	}
-
-
 
 	public getUser(): Observable<User> {
 		const accessToken = localStorage.getItem('accessToken');
