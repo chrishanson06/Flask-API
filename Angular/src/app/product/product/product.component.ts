@@ -37,8 +37,10 @@ export class ProductComponent implements OnInit, OnDestroy {
 		this.subs.forEach(sub => sub.unsubscribe());
 	}
 
-	addToCart(product: Product) {
-		this.cartService.addToCart(product);
+	addToCart(product?: Product) {
+		if (product) {
+			this.cartService.addToCart(product);
+		}
 	}
 
 }

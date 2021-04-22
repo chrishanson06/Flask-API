@@ -18,7 +18,12 @@ from resources.errors import errors
 
 import os
 
+import stripe
+from secret import stripe_sk
+
 PRODUCTION = False
+
+stripe.api_key = stripe_sk
 
 app = Flask(__name__)
 if PRODUCTION:

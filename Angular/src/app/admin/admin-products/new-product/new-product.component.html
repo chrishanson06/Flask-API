@@ -7,7 +7,14 @@
 		<mat-label>Slug</mat-label>
 		<input matInput formControlName="slug" />
 	</mat-form-field>
-	<mat-checkbox color="primary" formControlName="featured">Featured</mat-checkbox>
+	<mat-form-field appearance="fill">
+		<mat-label>Short Description</mat-label>
+		<textarea matInput formControlName="shortDescription"></textarea>
+	</mat-form-field>
+	<mat-form-field appearance="fill">
+		<mat-label>Description</mat-label>
+		<textarea matInput formControlName="description"></textarea>
+	</mat-form-field>
 	<mat-form-field appearance="fill">
 		<mat-label>Price</mat-label>
 		<input matInput formControlName="price" />

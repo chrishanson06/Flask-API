@@ -8,7 +8,7 @@ import { AllProductsComponent } from './all-products/all-products.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+
 import { ReactiveFormsModule } from '@angular/forms';
 
 
@@ -26,7 +26,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 	MatFormFieldModule,
 	MatInputModule,
-	MatCheckboxModule,
 	MatButtonModule
   ]
 })

@@ -20,6 +20,14 @@ const routes: Routes = [
 		canActivate: [AuthGuard]
 	},
 	{
+		path: 'cart',
+		loadChildren: () => import('./payment/cart/cart.module').then(m => m.CartModule)
+	},
+	{
+		path: 'checkout',
+		loadChildren: () => import('./payment/checkout/checkout.module').then(m => m.CheckoutModule)
+	},
+	{
 		path: 'admin',
 		loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
 		canActivate: [AuthGuard, AdminGuard]

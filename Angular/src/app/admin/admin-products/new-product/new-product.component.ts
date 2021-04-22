@@ -17,7 +17,8 @@ export class NewProductComponent implements OnInit {
 		this.productGroup = new FormGroup({
 			name: new FormControl('', [Validators.required]),
 			slug: new FormControl('', [Validators.required]),
-			featured: new FormControl(''),
+			shortDescription: new FormControl(''),
+			description: new FormControl(''),
 			price: new FormControl('0.00', [Validators.required])
 		});
 	}
@@ -34,7 +35,8 @@ export class NewProductComponent implements OnInit {
 			const product: Product = {
 				name: this.productGroup.get('name')?.value,
 				slug: this.productGroup.get('slug')?.value,
-				featured: this.productGroup.get('featured')?.value,
+				shortDescription: this.productGroup.get('shortDescription')?.value,
+				description: this.productGroup.get('description')?.value,
 				price: this.productGroup.get('price')?.value,
 			};
 			this.productService.addProduct(product).toPromise().then(res => {

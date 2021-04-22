@@ -47,7 +47,7 @@ class Product(db.Document):
 	name = db.StringField()
 	slug = db.StringField(unique=True)
 	description = db.StringField()
-	short_description = db.StringField()
+	shortDescription = db.StringField()
 	sku = db.StringField()
 	price = db.DecimalField(precision=2)
 
