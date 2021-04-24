@@ -9,6 +9,7 @@ from .cart import CartApi
 from .coinbase import CoinbaseChargeApi, CoinbaseWebhookApi
 from .stripe import PaymentIntentApi, StripeApi
 
+from .vendor import MyVendorsApi, MyVendorApi
 from .product import ProductsApi, ProductApi
 from .cart import CartApi
 
@@ -16,8 +17,6 @@ import resources.sockets
 
 from .admin import AdminApi, AdminUsersApi, AdminUserApi
 from .stripe import PaymentIntentApi, StripeApi
-
-import resources.sockets
 
 def initialize_routes(api, base):
 	api.add_resource(SignupApi, base + 'auth/signup')
@@ -31,6 +30,9 @@ def initialize_routes(api, base):
 	api.add_resource(UploaderApi, base + 'file/uploader')
 	api.add_resource(MediaApi, base + 'file/media')
 	api.add_resource(SingleMediaApi, base + 'file/media/<filename>')
+
+	api.add_resource(MyVendorsApi, base + 'vendor/myVendors')
+	api.add_resource(MyVendorApi, base + 'vendor/myVendor')
 
 	api.add_resource(ProductsApi, base + 'product/products')
 	api.add_resource(ProductApi, base + 'product/product/<id>')

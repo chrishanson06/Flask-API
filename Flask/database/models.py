@@ -52,13 +52,13 @@ class User(db.Document):
 		}
 
 class Vendor(db.Document):
-	owner = db.ReferenceField('User', unique=True)
+	owner = db.ReferenceField('User')
 	name = db.StringField()
 	slug = db.StringField()
 	profileImg = db.StringField()
 	phoneNumber = db.StringField()
 	email = db.EmailField()
-	status = db.StringField() # Can be 'applied, 'pending', 'acceoted', 'declined'
+	status = db.StringField() # Can be 'applied, 'pending', 'accepted', 'declined', 'deactivated'
 	products = db.ListField(db.ReferenceField('Product'))
 
 	def getProducts(self):
