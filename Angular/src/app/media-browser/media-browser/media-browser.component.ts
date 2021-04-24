@@ -1,4 +1,5 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { HttpEventType } from '@angular/common/http';
+import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { FileService } from 'src/app/core/services/file.service';
 
 @Component({
@@ -10,16 +11,21 @@ export class MediaBrowserComponent implements OnInit {
 
 	@Output() selectedImage = new EventEmitter();
 
+	@ViewChild('fileUpload') fileUpload: ElementRef | null;
+
 	files: string[];
 	selected: number;
 
 	gettingInformation: boolean;
+	uploadPercent: number;
 	uploading: boolean;
 
 	constructor(private fileService: FileService) {
+		this.fileUpload = null;
 		this.files = [];
 		this.gettingInformation = true;
 		this.selected = -1;
+		this.uploadPercent = 0;
 		this.uploading = false;
 	}
 
@@ -60,13 +66,26 @@ export class MediaBrowserComponent implements OnInit {
 	onFileUploaderSelected(event: any) {
 		const file: File = event.target.files[0];
 		if (file) {
+			this.uploadPercent = 0;
 			this.uploading = true;
-			this.fileService.upload(file).toPromise().then(res => {
-				if (res) {
-					this.getFiles();
+			this.fileService.upload(file).subscribe(res => {
+				if (res.type === HttpEventType.Response) {
+					// Done uploading
+					if (this.fileUpload) {
+						this.fileUpload.nativeElement.value = '';
+					}
+					this.uploading = false;
+					if (res) {
+						this.getFiles();
+					}
+				} else if (res.type === HttpEventType.UploadProgress) {
+					// Update progress
+					if (res.total) {
+						this.uploadPercent = 100 * res.loaded / res.total;
+						console.log(this.uploadPercent);
+					}
 				}
-				this.uploading = false;
-			}).catch(err => this.uploading = false);
+			}, err => this.uploading = false);
 		}
 	}
 

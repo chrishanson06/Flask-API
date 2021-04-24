@@ -8,6 +8,12 @@ Works great as a Flask API skeleton, complete with authentication, password salt
 
 `pip install -r requirements.txt`
 
+Create a secret.py file and store it in the same folder as app.py that contains:
+
+* stripe_sk: your stripe secret key
+* coinbase_commerce_api_key: your Coinbase Commerce API key
+* coinbase_commerce_shared_secret: your Coinbase Commerce shared webhook secret
+
 To run the local (nonproduction) Flask server
 
 `python wsgi.py`
