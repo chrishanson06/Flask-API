@@ -1,5 +1,6 @@
 from database.models import Product
 
+# Returns the order amount in cents
 def calculate_order_amount(items):
 	total = 0
 	for item in items:
