@@ -4,8 +4,8 @@
 	</button>
 	<mat-menu #menu="matMenu" yPosition="above" xPosition="before">
 		<span *ngFor="let product of products" (click)="$event.stopPropagation()" mat-menu-item>
-			<button (click)="reduceProduct(product.product, $event)" mat-icon-button><mat-icon>clear</mat-icon></button>
-			<span>{{ product.product.name }} x{{ product.qty }}</span>
+			<button (click)="reduceProduct(product.id, $event)" mat-icon-button><mat-icon>clear</mat-icon></button>
+			<span>{{ product.name }} x{{ product.qty }}</span>
 		</span>
 		<p mat-menu-item *ngIf="cartSize === 0">No items in cart!</p>
 		<button mat-flat-button routerLink="/cart">View Cart</button>

@@ -31,7 +31,7 @@ export class CheckoutComponent implements OnInit {
 	ngOnInit(): void {
 		const headers = new HttpHeaders().append('Content-Type', 'application/json');
 		
-		this.cartService.getCart().then(cart => {
+		this.cartService.getCart().toPromise().then(cart => {
 			this.http.post<Intent>(environment.apiServer + 'payment/stripePaymentIntent', JSON.stringify(cart), { headers })
 			.toPromise().then(intent => {
 				this.stripeIntent = intent;
