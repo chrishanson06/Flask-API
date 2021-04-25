@@ -14,10 +14,10 @@ class CartItem(db.EmbeddedDocument):
 	def serialize(self):
 		return {
 			'id': str(self.product.pk),
-			'vendor': str(self.product.vendor.pk),
-			'vendorImg': self.product.vendor.profileImg,
-			'vendorName': self.product.vendor.name,
-			'vendorSlug': self.product.vendor.slug,
+			# 'vendor': str(self.product.vendor.pk),
+			# 'vendorImg': self.product.vendor.profileImg,
+			# 'vendorName': self.product.vendor.name,
+			# 'vendorSlug': self.product.vendor.slug,
 			'name': self.product.name,
 			'price': float(self.product.price),
 			'qty': self.qty

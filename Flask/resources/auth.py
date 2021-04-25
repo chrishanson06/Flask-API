@@ -156,7 +156,7 @@ class UserApi(Resource):
 	def get(self):
 		try:
 			user = User.objects.get(id=get_jwt_identity())
-			return jsonify(user.getPasswordLess())
+			return jsonify(user.serialize())
 		except Exception:
 			raise InternalServerError
 	'''

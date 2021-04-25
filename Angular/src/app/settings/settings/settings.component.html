@@ -1,1 +1,6 @@
+<div *ngIf="user?.isVendor" id="vendor-settings">
+	<p>Vendor settings here</p>
+</div>
+<button mat-raised-button color="primary" *ngIf="user !== null && !user?.isVendor" [disabled]="becomingVendor" (click)="becomeVendor()">Become a vendor</button>
+
 <button mat-raised-button color="warn" (click)="deleteUser()">Delete User</button>
