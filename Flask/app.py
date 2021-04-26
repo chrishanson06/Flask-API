@@ -18,7 +18,8 @@ from resources.errors import errors
 
 import stripe
 from coinbase_commerce.client import Client
-from secret import stripe_sk, coinbase_commerce_api_key
+import braintree
+from secret import stripe_sk, coinbase_commerce_api_key, braintree_merchant_id, braintree_public_key, braintree_private_key
 
 import os
 
@@ -26,6 +27,14 @@ PRODUCTION = False
 
 stripe.api_key = stripe_sk
 ccClient = Client(api_key=coinbase_commerce_api_key)
+braintreeGateway = braintree.BraintreeGateway(
+	braintree.Configuration(
+		braintree.Environment.Sandbox,
+		merchant_id=braintree_merchant_id,
+		public_key=braintree_public_key,
+		private_key=braintree_private_key
+	)
+)
 
 app = Flask(__name__)
 if PRODUCTION:

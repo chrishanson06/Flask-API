@@ -27,7 +27,7 @@ class PaymentIntentApi(Resource):
 			if not data:
 				return ''
 			intent = stripe.PaymentIntent.create(
-				amount=calculate_order_amount(data),
+				amount=int(calculate_order_amount(data) * 100),
 				currency='usd'
 				# TODO: description
 			)

@@ -6,8 +6,9 @@ from .auth import SignupApi, LoginApi, ForgotPassword, ResetPassword, TokenRefre
 from .file import UploaderApi, MediaApi, SingleMediaApi
 from .cart import CartApi
 
-from .coinbase import CoinbaseChargeApi, CoinbaseWebhookApi
 from .stripe import PaymentIntentApi, StripeApi
+from .coinbase import CoinbaseChargeApi, CoinbaseWebhookApi
+from .braintree import BraintreeClientTokenApi
 
 from .product import ProductsApi, ProductApi
 from .cart import CartApi
@@ -15,7 +16,6 @@ from .cart import CartApi
 import resources.sockets
 
 from .admin import AdminApi, AdminUsersApi, AdminUserApi
-from .stripe import PaymentIntentApi, StripeApi
 
 import resources.sockets
 
@@ -45,3 +45,4 @@ def initialize_routes(api, base):
 	api.add_resource(StripeApi, base + 'payment/stripe')
 	api.add_resource(CoinbaseChargeApi, base + 'payment/coinbasePaymentIntent')
 	api.add_resource(CoinbaseWebhookApi, base + 'payment/coinbase')
+	api.add_resource(BraintreeClientTokenApi, base + 'payment/braintreeClientToken')

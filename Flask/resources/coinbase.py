@@ -18,7 +18,7 @@ class CoinbaseChargeApi(Resource):
 		data = json.loads(request.data)
 		if not data:
 			return ''
-		price = calculate_order_amount(data) / 100
+		price = calculate_order_amount(data)
 		
 		charge_info = {
 			'name': 'Test Charge',

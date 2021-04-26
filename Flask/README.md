@@ -10,9 +10,12 @@ Works great as a Flask API skeleton, complete with authentication, password salt
 
 Create a secret.py file and store it in the same folder as app.py that contains:
 
-* stripe_sk: your stripe secret key
-* coinbase_commerce_api_key: your Coinbase Commerce API key
-* coinbase_commerce_shared_secret: your Coinbase Commerce shared webhook secret
+* stripe_sk
+* coinbase_commerce_api_key
+* coinbase_commerce_shared_secret
+* braintree_merchant_id 
+* braintree_public_key 
+* braintree_private_key
 
 To run the local (nonproduction) Flask server
 
