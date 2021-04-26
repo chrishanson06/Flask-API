@@ -8,6 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { LayoutModule } from '@angular/cdk/layout';
 
+import { MatExpansionModule } from '@angular/material/expansion';
+
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { MediaBrowserModule } from '../media-browser/media-browser.module';
@@ -25,6 +27,8 @@ import { MediaBrowserModule } from '../media-browser/media-browser.module';
 		MatIconModule,
 		MatButtonModule,
 		LayoutModule,
+
+		MatExpansionModule,
 
 		MediaBrowserModule
 	],
