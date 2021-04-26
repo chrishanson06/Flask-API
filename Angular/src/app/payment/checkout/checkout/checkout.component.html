@@ -4,7 +4,7 @@
 	</div>
 	<button id="submit">
 		<div class="spinner hidden" id="spinner"></div>
-		<span id="button-text">Pay with card</span>
+		<span id="button-text">Pay with Stripe</span>
 	</button>
 	<p id="card-error" role="alert"></p>
 	<p class="result-message hidden">
@@ -13,6 +13,14 @@
 	</p>
 </form>
 
-<div id="dropin-container"></div>
+<form id="braintree-payment-form">
+	<div id="dropin-container">
+		<!--Braintree injects the Dropin Element-->
+	</div>
+	<button id="braintree-submit">
+		<div class="spinner hidden" id="spinner"></div>
+		<span id="button-text">Pay with Braintree</span>
+	</button>
+</form>
 
 <a *ngIf="coinbaseIntent !== null" [href]="coinbaseIntent?.hosted_url">Pay with cryptocurrency</a>

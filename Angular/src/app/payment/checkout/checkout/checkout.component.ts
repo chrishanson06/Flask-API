@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { CartService } from '../../cart/cart.service';
 
@@ -67,7 +67,7 @@ export class CheckoutComponent implements OnInit {
 							cardError.textContent = event.error ? event.error.message ? event.error.message : null : '';
 						}
 					});
-					const form = document.getElementById('payment-form');
+					const form = document.getElementById('stripe-payment-form');
 					if (form) {
 						form.addEventListener('submit', event => {
 							event.preventDefault();
@@ -77,11 +77,26 @@ export class CheckoutComponent implements OnInit {
 					}
 				});
 
+			const self = this;
 			this.http.get<Intent>(environment.apiServer + 'payment/braintreeClientToken', { headers })
 				.toPromise().then(intent => {
 					braintree.dropin.create({
 						authorization: intent.clientToken,
 						container: '#dropin-container'
+					}).then((dropinInstance: any) => {
+						const form = document.getElementById('braintree-payment-form');
+						form?.addEventListener('submit', (event: any) => {
+							event.preventDefault();
+							dropinInstance.requestPaymentMethod().then((payload: any) => {
+								const pack = { payment_method_nonce: payload.nonce, items: cart };
+								console.log(pack);
+								this.http.get<Intent>(environment.apiServer + 'payment/braintreeClientToken', { headers })
+									.toPromise();
+								self.http.post<any>(environment.apiServer + 'payment/braintreeClientToken', pack, { headers }).toPromise().then(res => {
+									console.log(res);
+								});
+							});
+						});
 					});
 				});
 
@@ -110,5 +125,7 @@ export class CheckoutComponent implements OnInit {
 			})
 		}
 	}
+
+
 
 }

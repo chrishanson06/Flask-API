@@ -28,21 +28,27 @@ class BraintreeClientTokenApi(Resource):
 		else:
 			return { 'clientToken': braintreeGateway.client_token.generate() }
 	'''
-	Post the nonce
+	Post the nonce and pay
 	'''
 	def post(self):
-		nonce = request.form['payment_method_nonce']
-		items = json.loads(request.form['items'])
-		deviceData = json.loads(request.form['deviceData'])
+		body = request.get_json()
+		nonce = body.get('payment_method_nonce')
+		print(nonce)
+		items = body.get('items')
+		amount = calculate_order_amount(items)
+		print(amount)
+		#deviceData = json.loads(body.get('deviceData'))
 		result = braintreeGateway.transaction.sale({
-			'amount': calculate_order_amount(items) / 100,
+			'amount': str(amount),
 			'payment_method_nonce': nonce,
-			'device_data': deviceData,
+		#	'device_data': deviceData,
 			'options': {
             	"submit_for_settlement": True
         	}
 		})
+		print(result)
 		if result.is_success or result.transaction:
 			return 'ok', 200
 		else:
-			raise InternalServerError
+		 	raise InternalServerError
+		
