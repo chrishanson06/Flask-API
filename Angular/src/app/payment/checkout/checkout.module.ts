@@ -5,6 +5,7 @@ import { CheckoutRoutingModule } from './checkout-routing.module';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { HttpClientModule } from '@angular/common/http';
 
+import { MatStepperModule } from '@angular/material/stepper';
 
 @NgModule({
 	declarations: [
@@ -14,7 +15,9 @@ import { HttpClientModule } from '@angular/common/http';
 		CommonModule,
 		CheckoutRoutingModule,
 
-		HttpClientModule
+		HttpClientModule,
+
+		MatStepperModule
 	]
 })
 export class CheckoutModule { }

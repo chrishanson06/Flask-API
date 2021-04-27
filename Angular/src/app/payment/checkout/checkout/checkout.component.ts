@@ -2,8 +2,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { CartService } from '../../cart/cart.service';
-
-declare var braintree: any;
+import * as braintree from 'braintree-web';
+import { CartItem } from 'src/app/models/cart-item';
 
 interface Intent {
 	clientSecret?: string;
@@ -19,22 +19,29 @@ interface Intent {
 export class CheckoutComponent implements OnInit {
 
 	stripe: stripe.Stripe;
-	products: any[]
+	products: CartItem[]
 	stripeIntent: Intent | null;
 	coinbaseIntent: Intent | null;
+
+	hostedFieldsInstance: braintree.HostedFields | null;
+	cardholdersName: string;
 
 	constructor(private http: HttpClient, private cartService: CartService) {
 		// Change this on your end
 		this.stripe = Stripe(environment.stripeKey);
-		this.products = [{ 'sku': 'test', 'quantity': 1 }];
+		this.products = [];
 		this.stripeIntent = null;
 		this.coinbaseIntent = null;
+
+		this.hostedFieldsInstance = null;
+		this.cardholdersName = '';
 	}
 
 	ngOnInit(): void {
 		const headers = new HttpHeaders().append('Content-Type', 'application/json');
 
 		this.cartService.getCart().toPromise().then(cart => {
+			this.products = cart;
 			this.http.post<Intent>(environment.apiServer + 'payment/stripePaymentIntent', JSON.stringify(cart), { headers })
 				.toPromise().then(intent => {
 					this.stripeIntent = intent;
@@ -77,9 +84,9 @@ export class CheckoutComponent implements OnInit {
 					}
 				});
 
-			const self = this;
 			this.http.get<Intent>(environment.apiServer + 'payment/braintreeClientToken', { headers })
 				.toPromise().then(intent => {
+					/* Dropin
 					braintree.dropin.create({
 						authorization: intent.clientToken,
 						container: '#dropin-container'
@@ -97,7 +104,65 @@ export class CheckoutComponent implements OnInit {
 								});
 							});
 						});
-					});
+					});*/
+					if (intent.clientToken) {
+						braintree.client.create({
+							authorization: intent.clientToken
+						}).then((clientInstance: any) => {
+							braintree.hostedFields.create({
+								client: clientInstance,
+								styles: {
+
+								},
+								fields: {
+									number: {
+										selector: '#card-number',
+										placeholder: '1111 1111 1111 1111'
+									},
+									cvv: {
+										selector: '#cvv',
+										placeholder: '111'
+									},
+									expirationDate: {
+										selector: '#expiration-date',
+										placeholder: 'MM/YY'
+									}
+								}
+							}).then((hostedFieldsInstance) => {
+
+								this.hostedFieldsInstance = hostedFieldsInstance;
+
+								hostedFieldsInstance.on('focus', (event) => {
+									const field = event.fields[event.emittedBy];
+									const label = this.findLabel(field);
+									label?.classList.remove('filled'); // added and removed css classes
+									// can add custom code for custom validations here
+								});
+
+								hostedFieldsInstance.on('blur', (event) => {
+									const field = event.fields[event.emittedBy];
+									const label = this.findLabel(field); // fetched label to apply custom validations
+									// can add custom code for custom validations here
+								});
+
+								hostedFieldsInstance.on('empty', (event) => {
+									const field = event.fields[event.emittedBy];
+									// can add custom code for custom validations here
+								});
+
+								hostedFieldsInstance.on('validityChange', (event) => {
+									const field = event.fields[event.emittedBy];
+									const label = this.findLabel(field);
+									if (field.isPotentiallyValid) { // applying custom css and validations
+										label?.classList.remove('invalid');
+									} else {
+										label?.classList.add('invalid');
+									}
+									// can add custom code for custom validations here
+								});
+							});
+						});
+					}
 				});
 
 			this.http.post<Intent>(environment.apiServer + 'payment/coinbasePaymentIntent', JSON.stringify(cart), { headers })
@@ -126,6 +191,37 @@ export class CheckoutComponent implements OnInit {
 		}
 	}
 
+	tokenizeUserDetails() {
+		this.hostedFieldsInstance?.tokenize({ cardholderName: this.cardholdersName }).then((payload) => {
+			console.log(payload);
+			// Example payload return on succesful tokenization
 
+			/* {nonce: "tokencc_bh_hq4n85_gxcw4v_dpnw4z_dcphp8_db4", details: {…},
+			description: "ending in 11", type: "CreditCard", binData: {…}}
+			binData: {prepaid: "Unknown", healthcare: "Unknown", debit: "Unknown", durbinRegulated: "Unknown", commercial: "Unknown", …}
+			description: "ending in 11"
+			details: {bin: "411111", cardType: "Visa", lastFour: "1111", lastTwo: "11"}
+			nonce: "tokencc_bh_hq4n85_gxcw4v_dpnw4z_dcphp8_db4"
+			type: "CreditCard"
+			__proto__: Object
+			*/
+
+			const pack = { payment_method_nonce: payload.nonce, items: this.products };
+			this.http.post<any>(environment.apiServer + 'payment/braintreeClientToken', pack).toPromise().then(res => {
+				console.log(res);
+			});
+		}).catch((error) => {
+			console.log(error);
+			// perform custom validation here or log errors
+		});
+	}
+
+	findLabel(field: any) {
+		return document.querySelector('.hosted-field--label[for="' + field.container.id + '"]');
+	}
+
+	setCardholderName(event: any) {
+		this.cardholdersName = event.target.value;
+	}
 
 }

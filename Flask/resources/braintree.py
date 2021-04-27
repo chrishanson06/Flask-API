@@ -50,5 +50,14 @@ class BraintreeClientTokenApi(Resource):
 		if result.is_success or result.transaction:
 			return 'ok', 200
 		else:
-		 	raise InternalServerError
-		
+			raise InternalServerError
+
+class BraintreeWebhookApi(Resource):
+	def post(self):
+		webhook_notification = braintreeGateway.webhook_notification.parse(str(request.form['bt_signature']), request.form['bt_payload'])
+
+		# Example values for webhook notification properties
+		print(webhook_notification.kind) # "subscription_went_past_due"
+		print(webhook_notification.timestamp) # "Sun Jan 1 00:00:00 UTC 2012"
+
+		return Response(status=200)

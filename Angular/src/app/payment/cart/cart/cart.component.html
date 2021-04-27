@@ -12,5 +12,12 @@
 	</mat-menu>
 </section>
 <section id="page-display" *ngIf="appearance !== 'button'">
-	<p>cart page</p>
+	<mat-list>
+		<span mat-list-item *ngFor="let product of products" (click)="$event.stopPropagation()" mat-menu-item>
+			<button (click)="reduceProduct(product.id, $event)" mat-icon-button><mat-icon>clear</mat-icon></button>
+			<span>{{ product.name }} x{{ product.qty }}</span>
+			<button (click)="increaseProduct(product.id, $event)" mat-icon-button><mat-icon>add</mat-icon></button>
+		</span>
+	</mat-list>
+	<a routerLink="/checkout">Checkout</a>
 </section>

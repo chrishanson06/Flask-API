@@ -10,7 +10,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 
 import { CartRoutingModule } from './cart-routing.module';
 import { CartComponent } from './cart/cart.component';
-import { CartService } from './cart.service';
+import { MatListModule } from '@angular/material/list';
 
 
 @NgModule({
@@ -26,10 +26,8 @@ import { CartService } from './cart.service';
 		MatButtonModule,
 		MatIconModule,
 		MatMenuModule,
-		MatBadgeModule
-	],
-	providers: [
-		CartService
+		MatBadgeModule,
+		MatListModule
 	],
 	exports: [
 		CartComponent

@@ -8,7 +8,7 @@ from .cart import CartApi
 
 from .stripe import PaymentIntentApi, StripeApi
 from .coinbase import CoinbaseChargeApi, CoinbaseWebhookApi
-from .braintree import BraintreeClientTokenApi
+from .braintree import BraintreeClientTokenApi, BraintreeWebhookApi
 
 from .product import ProductsApi, ProductApi
 from .cart import CartApi
@@ -46,3 +46,4 @@ def initialize_routes(api, base):
 	api.add_resource(CoinbaseChargeApi, base + 'payment/coinbasePaymentIntent')
 	api.add_resource(CoinbaseWebhookApi, base + 'payment/coinbase')
 	api.add_resource(BraintreeClientTokenApi, base + 'payment/braintreeClientToken')
+	api.add_resource(BraintreeWebhookApi, base + 'payment/braintree')
