@@ -6,18 +6,30 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { HttpClientModule } from '@angular/common/http';
 
 import { MatStepperModule } from '@angular/material/stepper';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CountrySelectComponent } from './country-select/country-select.component';
+
+import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
 	declarations: [
-		CheckoutComponent
+		CheckoutComponent,
+  CountrySelectComponent
 	],
 	imports: [
 		CommonModule,
 		CheckoutRoutingModule,
 
 		HttpClientModule,
+		ReactiveFormsModule,
 
-		MatStepperModule
+		MatStepperModule,
+
+		MatFormFieldModule,
+		MatInputModule,
+		MatAutocompleteModule
 	]
 })
 export class CheckoutModule { }

@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { CartService } from '../../cart/cart.service';
 import * as braintree from 'braintree-web';
 import { CartItem } from 'src/app/models/cart-item';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 interface Intent {
 	clientSecret?: string;
@@ -27,8 +28,9 @@ export class CheckoutComponent implements OnInit {
 	cardholdersName: string;
 	deviceData:  string;
 
+	addressForm: FormGroup;
+
 	constructor(private http: HttpClient, private cartService: CartService) {
-		// Change this on your end
 		this.stripe = Stripe(environment.stripeKey);
 		this.products = [];
 		this.stripeIntent = null;
@@ -37,12 +39,16 @@ export class CheckoutComponent implements OnInit {
 		this.hostedFieldsInstance = null;
 		this.cardholdersName = '';
 		this.deviceData = '';
+
+		this.addressForm = new FormGroup({
+			country: new FormControl('', [Validators.required])
+		});
 	}
 
 	ngOnInit(): void {
 		const headers = new HttpHeaders().append('Content-Type', 'application/json');
 
-		this.cartService.getCart().toPromise().then(cart => {
+		/*this.cartService.getCart().toPromise().then(cart => {
 			this.products = cart;
 			this.http.post<Intent>(environment.apiServer + 'payment/stripePaymentIntent', JSON.stringify(cart), { headers })
 				.toPromise().then(intent => {
@@ -88,25 +94,6 @@ export class CheckoutComponent implements OnInit {
 
 			this.http.get<Intent>(environment.apiServer + 'payment/braintreeClientToken', { headers })
 				.toPromise().then(intent => {
-					/* Dropin
-					braintree.dropin.create({
-						authorization: intent.clientToken,
-						container: '#dropin-container'
-					}).then((dropinInstance: any) => {
-						const form = document.getElementById('braintree-payment-form');
-						form?.addEventListener('submit', (event: any) => {
-							event.preventDefault();
-							dropinInstance.requestPaymentMethod().then((payload: any) => {
-								const pack = { payment_method_nonce: payload.nonce, items: cart };
-								console.log(pack);
-								this.http.get<Intent>(environment.apiServer + 'payment/braintreeClientToken', { headers })
-									.toPromise();
-								self.http.post<any>(environment.apiServer + 'payment/braintreeClientToken', pack, { headers }).toPromise().then(res => {
-									console.log(res);
-								});
-							});
-						});
-					});*/
 					if (intent.clientToken) {
 						braintree.client.create({
 							authorization: intent.clientToken
@@ -177,6 +164,7 @@ export class CheckoutComponent implements OnInit {
 					this.coinbaseIntent = intent;
 				});
 		});
+		*/
 	}
 
 	payWithCard(stripe: stripe.Stripe, card: stripe.elements.Element, clientSecret: string | undefined) {

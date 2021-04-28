@@ -1,7 +1,14 @@
+<mat-horizontal-stepper #stepper>
+	<mat-step [stepControl]="addressForm" errorMessage="Address is incorrect">
+		<app-country-select></app-country-select>
+	</mat-step>
+</mat-horizontal-stepper>
+
+<!--
 <form id="stripe-payment-form">
 	<div id="card-element">
 		<!--Stripe.js injects the Card Element-->
-	</div>
+<!--</div>
 	<button id="submit">
 		<div class="spinner hidden" id="spinner"></div>
 		<span id="button-text">Pay with Stripe</span>
@@ -21,7 +28,7 @@
 		<div class="panel__content">
 			<div class="textfield--float-label">
 				<!-- Begin hosted fields section -->
-				<label class="hosted-field--label" for="card-number"><span class="icon">
+<!--				<label class="hosted-field--label" for="card-number"><span class="icon">
 						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
 							<path d="M0 0h24v24H0z" fill="none" />
 							<path
@@ -30,7 +37,7 @@
 				</label>
 				<div id="card-number" class="hosted-field"></div>
 				<!-- End hosted fields section -->
-			</div>
+<!--			</div>
 			<div class="custom-name">
 				<label class="hosted-field--label" for="cardholder-name" name="cardholderName">
 					<span class="icon">
@@ -46,7 +53,7 @@
 			</div>
 			<div class="textfield--float-label">
 				<!-- Begin hosted fields section -->
-				<label class="hosted-field--label" for="expiration-date">
+<!--				<label class="hosted-field--label" for="expiration-date">
 					<span class="icon">
 						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
 							<path
@@ -56,10 +63,10 @@
 					Expiration Date</label>
 				<div id="expiration-date" class="hosted-field"></div>
 				<!-- End hosted fields section -->
-			</div>
+<!--			</div>
 			<div class="textfield--float-label">
 				<!-- Begin hosted fields section -->
-				<label class="hosted-field--label" for="cvv">
+<!--				<label class="hosted-field--label" for="cvv">
 					<span class="icon">
 						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
 							<path
@@ -69,7 +76,7 @@
 					CVV</label>
 				<div id="cvv" class="hosted-field"></div>
 				<!-- End hosted fields section -->
-			</div>
+<!--			</div>
 		</div>
 		<footer class="panel__footer">
 			<input type="button" value="Pay" (click)="tokenizeUserDetails();" class="pay-button" />
@@ -78,15 +85,5 @@
 
 </form>
 
-<!--
-<form id="braintree-payment-form">
-	<div id="dropin-container">
-		<!--Braintree injects the Dropin Element-->
-<!-- </div>
-	<button id="braintree-submit">
-		<div class="spinner hidden" id="spinner"></div>
-		<span id="button-text">Pay with Braintree</span>
-	</button>
-</form> -->
-
 <a *ngIf="coinbaseIntent !== null" [href]="coinbaseIntent?.hosted_url">Pay with cryptocurrency</a>
+-->
