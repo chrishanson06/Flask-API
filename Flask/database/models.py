@@ -63,3 +63,19 @@ class Product(db.Document):
 			'sku': self.sku,
 			'price': float(self.price)
 		}
+
+class Order(db.Document):
+	orderer = db.ReferenceField('User')
+	orderStatus = db.StringField() # can be 'pending', 'processing', 'shipped', 'completed'
+	products = db.ListField(db.EmbeddedDocumentField('CartItem'))
+	addresses = db.DictField()
+
+	def serialize(self):
+		mappedProducts = list(map(lambda p: p.serialize(), self.products))
+		return {
+			'id': str(self.pk),
+			'orderer': str(self.orderer.pk),
+			'orderStatus': self.orderStatus,
+			'products': mappedProducts,
+			'addresses': self.addresses
+		}

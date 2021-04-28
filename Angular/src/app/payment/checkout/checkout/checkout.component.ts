@@ -256,7 +256,7 @@ export class CheckoutComponent implements OnInit {
 			__proto__: Object
 			*/
 
-			const pack = { payment_method_nonce: payload.nonce, items: this.products, deviceData: this.deviceData };
+			const pack = { payment_method_nonce: payload.nonce, items: this.products, addresses: this.getAddressDetails(), deviceData: this.deviceData };
 			this.http.post<any>(environment.apiServer + 'payment/braintreeClientToken', pack).toPromise().then(res => {
 				console.log(res);
 			});

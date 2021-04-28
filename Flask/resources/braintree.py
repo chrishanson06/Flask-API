@@ -10,6 +10,8 @@ from resources.errors import InternalServerError
 
 from resources.utils import calculate_order_amount
 
+from database.models import Order, Product, CartItem
+
 import braintree
 
 from app import braintreeGateway
@@ -30,24 +32,31 @@ class BraintreeClientTokenApi(Resource):
 	'''
 	Post the nonce and pay
 	'''
+	@jwt_required(optional=True)
 	def post(self):
 		body = request.get_json()
 		nonce = body.get('payment_method_nonce')
-		print(nonce)
 		items = body.get('items')
 		amount = calculate_order_amount(items)
+		addresses = body.get('addresses')
 
 		deviceData = json.loads(body.get('deviceData'))
 		result = braintreeGateway.transaction.sale({
 			'amount': str(amount),
 			'payment_method_nonce': nonce,
-			'device_data': deviceData,
+			'device_data': deviceData['correlation_id'],
 			'options': {
             	"submit_for_settlement": True
         	}
 		})
-		print(result)
 		if result.is_success or result.transaction:
+			builtItems = []
+			for item in items:
+				product = Product.objects.get(id=item['id'])
+				cartItem = CartItem(product=product, qty=item['qty'])
+				builtItems.append(cartItem)
+			order = Order(addresses=addresses, products=builtItems, orderer=get_jwt_identity(), orderStatus='pending')
+			order.save()
 			return 'ok', 200
 		else:
 			raise InternalServerError
