@@ -7,16 +7,15 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { MatStepperModule } from '@angular/material/stepper';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CountrySelectComponent } from './country-select/country-select.component';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
 	declarations: [
-		CheckoutComponent,
-  CountrySelectComponent
+		CheckoutComponent
 	],
 	imports: [
 		CommonModule,
@@ -29,7 +28,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
 		MatFormFieldModule,
 		MatInputModule,
-		MatAutocompleteModule
+		MatAutocompleteModule,
+		MatButtonModule
 	]
 })
 export class CheckoutModule { }

@@ -1,15 +1,22 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { CartService } from '../../cart/cart.service';
 import * as braintree from 'braintree-web';
 import { CartItem } from 'src/app/models/cart-item';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { map, startWith } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 interface Intent {
 	clientSecret?: string;
 	hosted_url?: string;
 	clientToken?: string
+}
+
+interface CountryPair {
+	name: string;
+	code: string;
 }
 
 @Component({
@@ -29,6 +36,11 @@ export class CheckoutComponent implements OnInit {
 	deviceData:  string;
 
 	addressForm: FormGroup;
+	billingForm: FormGroup;
+
+	countries: CountryPair[];
+	filteredCountries: Observable<CountryPair[]>;
+	filteredCountries2: Observable<CountryPair[]>;
 
 	constructor(private http: HttpClient, private cartService: CartService) {
 		this.stripe = Stripe(environment.stripeKey);
@@ -41,11 +53,49 @@ export class CheckoutComponent implements OnInit {
 		this.deviceData = '';
 
 		this.addressForm = new FormGroup({
-			country: new FormControl('', [Validators.required])
+			fullName: new FormControl('', [Validators.required]),
+			country: new FormControl('', [Validators.required]),
+			street1: new FormControl('', [Validators.required]),
+			street2: new FormControl(''),
+			stateProvidenceRegion: new FormControl('', [Validators.required]),
+			city: new FormControl('', [Validators.required]),
+			zip: new FormControl('', [Validators.required]),
+			phoneNumber: new FormControl('', [Validators.required])
 		});
+
+		this.billingForm = new FormGroup({
+			fullName: new FormControl('', [Validators.required]),
+			country: new FormControl('', [Validators.required]),
+			street1: new FormControl('', [Validators.required]),
+			street2: new FormControl(''),
+			stateProvidenceRegion: new FormControl('', [Validators.required]),
+			city: new FormControl('', [Validators.required]),
+			zip: new FormControl('', [Validators.required]),
+			phoneNumber: new FormControl('', [Validators.required])		});
+
+		this.countries = []
+		const countryControl = this.addressForm.get('country');
+		const countryControl2 = this.billingForm.get('country');
+		if (countryControl && countryControl2) {
+			this.filteredCountries = countryControl.valueChanges.pipe(
+				startWith(''),
+				map(value => this._filter(value))
+			);
+			this.filteredCountries2 = countryControl2.valueChanges.pipe(
+				startWith(''),
+				map(value => this._filter(value))
+			);
+		} else {
+			this.filteredCountries = new Observable<CountryPair[]>();
+			this.filteredCountries2 = new Observable<CountryPair[]>();
+		}
 	}
 
 	ngOnInit(): void {
+		this.http.get<CountryPair[]>(window.location.origin + '/assets/country/countries.json').toPromise().then(res => {
+			this.countries = res;
+		});
+
 		const headers = new HttpHeaders().append('Content-Type', 'application/json');
 
 		/*this.cartService.getCart().toPromise().then(cart => {
@@ -165,6 +215,11 @@ export class CheckoutComponent implements OnInit {
 				});
 		});
 		*/
+	}
+
+	private _filter(value: string): CountryPair[] {
+		const filterValue = value.toLowerCase();
+		return this.countries.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
 	}
 
 	payWithCard(stripe: stripe.Stripe, card: stripe.elements.Element, clientSecret: string | undefined) {
