@@ -33,7 +33,7 @@ export class CheckoutComponent implements OnInit {
 
 	hostedFieldsInstance: braintree.HostedFields | null;
 	cardholdersName: string;
-	deviceData:  string;
+	deviceData: string;
 
 	addressForm: FormGroup;
 	billingForm: FormGroup;
@@ -71,7 +71,8 @@ export class CheckoutComponent implements OnInit {
 			stateProvidenceRegion: new FormControl('', [Validators.required]),
 			city: new FormControl('', [Validators.required]),
 			zip: new FormControl('', [Validators.required]),
-			phoneNumber: new FormControl('', [Validators.required])		});
+			phoneNumber: new FormControl('', [Validators.required])
+		});
 
 		this.countries = []
 		const countryControl = this.addressForm.get('country');
@@ -271,6 +272,32 @@ export class CheckoutComponent implements OnInit {
 
 	setCardholderName(event: any) {
 		this.cardholdersName = event.target.value;
+	}
+
+	getAddressDetails() {
+		const addresses = {
+			shipping: {
+				name: this.addressForm.get('fullName')?.value,
+				country: this.addressForm.get('country')?.value,
+				street1: this.addressForm.get('street1')?.value,
+				street2: this.addressForm.get('street2')?.value,
+				region: this.addressForm.get('stateProvidenceRegion')?.value,
+				city: this.addressForm.get('city')?.value,
+				zip: this.addressForm.get('zip')?.value,
+				phoneNumber: this.addressForm.get('phoneNumber')?.value
+			},
+			billing: {
+				name: this.billingForm.get('fullName')?.value,
+				country: this.billingForm.get('country')?.value,
+				street1: this.billingForm.get('street1')?.value,
+				street2: this.billingForm.get('street2')?.value,
+				region: this.billingForm.get('stateProvidenceRegion')?.value,
+				city: this.billingForm.get('city')?.value,
+				zip: this.billingForm.get('zip')?.value,
+				phoneNumber: this.billingForm.get('phoneNumber')?.value
+			}
+		}
+		return addresses;
 	}
 
 }
