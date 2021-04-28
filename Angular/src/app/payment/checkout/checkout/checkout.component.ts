@@ -98,7 +98,7 @@ export class CheckoutComponent implements OnInit {
 
 		const headers = new HttpHeaders().append('Content-Type', 'application/json');
 
-		/*this.cartService.getCart().toPromise().then(cart => {
+		this.cartService.getCart().toPromise().then(cart => {
 			this.products = cart;
 			this.http.post<Intent>(environment.apiServer + 'payment/stripePaymentIntent', JSON.stringify(cart), { headers })
 				.toPromise().then(intent => {
@@ -214,7 +214,6 @@ export class CheckoutComponent implements OnInit {
 					this.coinbaseIntent = intent;
 				});
 		});
-		*/
 	}
 
 	private _filter(value: string): CountryPair[] {
