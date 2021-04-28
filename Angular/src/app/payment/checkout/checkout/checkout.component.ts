@@ -25,6 +25,7 @@ export class CheckoutComponent implements OnInit {
 
 	hostedFieldsInstance: braintree.HostedFields | null;
 	cardholdersName: string;
+	deviceData:  string;
 
 	constructor(private http: HttpClient, private cartService: CartService) {
 		// Change this on your end
@@ -35,6 +36,7 @@ export class CheckoutComponent implements OnInit {
 
 		this.hostedFieldsInstance = null;
 		this.cardholdersName = '';
+		this.deviceData = '';
 	}
 
 	ngOnInit(): void {
@@ -109,6 +111,11 @@ export class CheckoutComponent implements OnInit {
 						braintree.client.create({
 							authorization: intent.clientToken
 						}).then((clientInstance: any) => {
+							braintree.dataCollector.create({
+								client: clientInstance
+							}).then((dataCollectorInstance: braintree.DataCollector) => {
+								this.deviceData = dataCollectorInstance.deviceData;
+							});
 							braintree.hostedFields.create({
 								client: clientInstance,
 								styles: {
@@ -206,7 +213,7 @@ export class CheckoutComponent implements OnInit {
 			__proto__: Object
 			*/
 
-			const pack = { payment_method_nonce: payload.nonce, items: this.products };
+			const pack = { payment_method_nonce: payload.nonce, items: this.products, deviceData: this.deviceData };
 			this.http.post<any>(environment.apiServer + 'payment/braintreeClientToken', pack).toPromise().then(res => {
 				console.log(res);
 			});

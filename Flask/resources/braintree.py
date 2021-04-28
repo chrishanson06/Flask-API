@@ -36,12 +36,12 @@ class BraintreeClientTokenApi(Resource):
 		print(nonce)
 		items = body.get('items')
 		amount = calculate_order_amount(items)
-		print(amount)
-		#deviceData = json.loads(body.get('deviceData'))
+
+		deviceData = json.loads(body.get('deviceData'))
 		result = braintreeGateway.transaction.sale({
 			'amount': str(amount),
 			'payment_method_nonce': nonce,
-		#	'device_data': deviceData,
+			'device_data': deviceData,
 			'options': {
             	"submit_for_settlement": True
         	}
