@@ -1,5 +1,5 @@
 '''
-Product routes
+Order routes
 '''
 
 from flask import jsonify, request
@@ -9,26 +9,24 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from mongoengine.errors import FieldDoesNotExist, NotUniqueError, DoesNotExist, ValidationError, InvalidQueryError
 from resources.errors import SchemaValidationError, InternalServerError, UnauthorizedError
 
-from database.models import Product, User
+from database.models import Order, CartItem, Product, User
 
-class ProductsApi(Resource):
+class OrdersApi(Resource):
 	'''
-	Get all products according to search criteria
+	Get all orders according to search criteria
 	'''
+	@jwt_required()
 	def get(self):
 		products = Product.objects
 		mappedProducts = list(map(lambda p: p.serialize(), products))
 		return jsonify(mappedProducts)
 	'''
-	Add new product
+	Add new order
 	'''
-	@jwt_required()
+	@jwt_required(optional=True)
 	def post(self):
 		try:
-			user = User.objects.get(id=get_jwt_identity())
-			if not user.admin:
-				raise UnauthorizedError
-			product = Product(**request.get_json())
+			order = Order(orderer=get_jwt_identity(), orderStatus='pending', )
 			product.save()
 			id = product.id
 			return {'id': str(id)}, 200

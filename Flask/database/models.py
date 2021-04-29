@@ -5,7 +5,7 @@ Models to serialize between MongoDB and Python
 from .db import db
 from flask_bcrypt import generate_password_hash, check_password_hash
 
-import random, string
+import random, string, datetime
 
 class CartItem(db.EmbeddedDocument):
 	product = db.ReferenceField('Product')
@@ -66,9 +66,10 @@ class Product(db.Document):
 
 class Order(db.Document):
 	orderer = db.ReferenceField('User')
-	orderStatus = db.StringField() # can be 'pending', 'processing', 'shipped', 'completed'
+	orderStatus = db.StringField() # can be 'not-placed', 'pending', 'processing', 'shipped', 'completed'
 	products = db.ListField(db.EmbeddedDocumentField('CartItem'))
 	addresses = db.DictField()
+	createdAt = db.DateTimeField(default=datetime.datetime.now)
 
 	def serialize(self):
 		mappedProducts = list(map(lambda p: p.serialize(), self.products))

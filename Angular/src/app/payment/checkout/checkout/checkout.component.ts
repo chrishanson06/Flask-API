@@ -101,7 +101,7 @@ export class CheckoutComponent implements OnInit {
 
 		this.cartService.getCart().toPromise().then(cart => {
 			this.products = cart;
-			this.http.post<Intent>(environment.apiServer + 'payment/stripePaymentIntent', JSON.stringify(cart), { headers })
+			this.http.post<Intent>(environment.apiServer + 'payment/stripePaymentIntent', JSON.stringify(this.products), { headers })
 				.toPromise().then(intent => {
 					this.stripeIntent = intent;
 					const elements = this.stripe.elements();
@@ -210,7 +210,7 @@ export class CheckoutComponent implements OnInit {
 					}
 				});
 
-			this.http.post<Intent>(environment.apiServer + 'payment/coinbasePaymentIntent', JSON.stringify(cart), { headers })
+			this.http.post<Intent>(environment.apiServer + 'payment/coinbasePaymentIntent', JSON.stringify(this.products), { headers })
 				.toPromise().then(intent => {
 					this.coinbaseIntent = intent;
 				});
@@ -220,6 +220,10 @@ export class CheckoutComponent implements OnInit {
 	private _filter(value: string): CountryPair[] {
 		const filterValue = value.toLowerCase();
 		return this.countries.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
+	}
+
+	generateIntents(): void {
+		
 	}
 
 	payWithCard(stripe: stripe.Stripe, card: stripe.elements.Element, clientSecret: string | undefined) {
