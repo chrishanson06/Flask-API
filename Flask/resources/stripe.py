@@ -49,6 +49,8 @@ class StripeApi(Resource):
 		except ValueError:
 			return '', 400
 
+		print(event.type)
+		print(event.data.object)
 		if event.type == 'payment_intent.succeeded':
 			payment_intent = event.data.object # contains a stripe.PaymentIntent
 			# Then define and call a method to handle the successful payment intent.

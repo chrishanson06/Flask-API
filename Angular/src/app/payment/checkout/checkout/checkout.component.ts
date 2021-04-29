@@ -225,9 +225,34 @@ export class CheckoutComponent implements OnInit {
 	payWithCard(stripe: stripe.Stripe, card: stripe.elements.Element, clientSecret: string | undefined) {
 		if (clientSecret) {
 			// loading
+			const addresses = this.getAddressDetails();
 			this.stripe.confirmCardPayment(clientSecret, {
 				payment_method: {
-					card: card
+					card: card,
+					billing_details: {
+						name: addresses.billing.name,
+						address: {
+							line1: addresses.billing.street1,
+							line2: addresses.billing.street2,
+							city: addresses.billing.city,
+							country: addresses.billing.country,
+							state: addresses.billing.region,
+							postal_code: addresses.billing.zip
+						},
+						phone: addresses.billing.phoneNumber
+					}
+				},
+				shipping: {
+					name: addresses.shipping.name,
+					address: {
+						line1: addresses.shipping.street1,
+						line2: addresses.shipping.street2,
+						city: addresses.shipping.city,
+						country: addresses.shipping.country,
+						state: addresses.shipping.region,
+						postal_code: addresses.shipping.zip
+					},
+					phone: addresses.shipping.phoneNumber
 				}
 			}).then(function (result: any) {
 				if (result.error) {
