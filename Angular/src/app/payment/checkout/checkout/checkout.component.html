@@ -1,16 +1,16 @@
 <mat-vertical-stepper [linear]="true" #stepper>
-	<mat-step [stepControl]="addressForm" label="Shipping Address">
+	<mat-step [editable]="!cantEdit" [stepControl]="addressForm" label="Shipping Address">
 		<form [formGroup]="addressForm">
 			<mat-form-field appearance="fill">
 				<mat-label>Full Name</mat-label>
 				<input matInput formControlName="fullName" autocomplete="name" required />
 			</mat-form-field>
 			<mat-form-field appearance="fill">
-				<mat-label>Country</mat-label>
+				<mat-label>Country Code</mat-label>
 				<input matInput formControlName="country" [matAutocomplete]="auto" autocomplete="country" required />
 				<mat-autocomplete #auto="matAutocomplete">
-					<mat-option *ngFor="let country of filteredCountries | async" [value]="country.name">
-						<span class="country-wrapper"><img [src]="'../../../assets/country/svg/' + country.code.toLowerCase() + '.svg'" /><span>{{ country.name }}</span></span>
+					<mat-option *ngFor="let country of filteredCountries | async" [value]="country.code">
+						<span class="country-wrapper"><img [src]="'../../../assets/country/svg/' + country.code.toLowerCase() + '.svg'" /><span>{{ country.code }}</span></span>
 					</mat-option>
 				</mat-autocomplete>
 			</mat-form-field>
@@ -41,18 +41,18 @@
 			<button mat-button type="button" matStepperNext>Next</button>
 		</form>
 	</mat-step>
-	<mat-step [stepControl]="billingForm" label="Billing Address">
+	<mat-step [editable]="!cantEdit" [stepControl]="billingForm" label="Billing Address">
 		<form [formGroup]="billingForm">
 			<mat-form-field appearance="fill">
 				<mat-label>Full Name</mat-label>
 				<input matInput formControlName="fullName" autocomplete="name" required />
 			</mat-form-field>
 			<mat-form-field appearance="fill">
-				<mat-label>Country</mat-label>
+				<mat-label>Country Code</mat-label>
 				<input matInput formControlName="country" [matAutocomplete]="auto" autocomplete="country" required />
 				<mat-autocomplete #auto="matAutocomplete">
-					<mat-option *ngFor="let country of filteredCountries2 | async" [value]="country.name">
-						<span class="country-wrapper"><img [src]="'../../../assets/country/svg/' + country.code.toLowerCase() + '.svg'" /><span>{{ country.name }}</span></span>
+					<mat-option *ngFor="let country of filteredCountries2 | async" [value]="country.code">
+						<span class="country-wrapper"><img [src]="'../../../assets/country/svg/' + country.code.toLowerCase() + '.svg'" /><span>{{ country.code }}</span></span>
 					</mat-option>
 				</mat-autocomplete>
 			</mat-form-field>
@@ -81,7 +81,7 @@
 				<input matInput formControlName="phoneNumber" autocomplete="tel" required />
 			</mat-form-field>
 			<button mat-button type="button" matStepperPrevious>Back</button>
-			<button mat-button matStepperNext>Next</button>
+			<button mat-button matStepperNext (click)='generateIntents()'>Next</button>
 		</form>
 	</mat-step>
 	<mat-step>
@@ -166,8 +166,9 @@
 			
 			</form>
 			
-			<a *ngIf="coinbaseIntent !== null" [href]="coinbaseIntent?.hosted_url">Pay with cryptocurrency</a>
+			<div *ngIf="coinbaseIntent !== null">
+				<button mat-flat-button (click)='payWithCoinbase()'>Pay with cryptocurrency</button>
+			</div>
 		</section>
-		<button mat-button type="button" matStepperPrevious>Previous</button>
 	</mat-step>
 </mat-vertical-stepper>

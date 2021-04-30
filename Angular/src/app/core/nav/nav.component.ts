@@ -7,6 +7,9 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { User } from 'src/app/models/user';
 import { Router } from '@angular/router';
 import { CartService } from 'src/app/payment/cart/cart.service';
+import { WebsocketService } from '../services/websocket.service';
+import { environment } from 'src/environments/environment';
+import { io } from 'socket.io-client';
 
 interface LinkPair {
 	link: string;
@@ -35,10 +38,15 @@ export class NavComponent {
 	private swipeCoord: number[];
 	private swipeTime: number;
 
-	constructor(private breakpointObserver: BreakpointObserver, private auth: AuthService, private router: Router, private cartService: CartService) {
+	constructor(private breakpointObserver: BreakpointObserver, private auth: AuthService, private router: Router, private cartService: CartService, private ws: WebsocketService) {
 		this.user = null;
 		this.auth.user$.subscribe(user => {
 			this.user = user;
+			if (user) {
+				this.cartService.getCart().toPromise().then(res => {
+					this.cartService.setCart(res);
+				});
+			}
 		});
 		this.links = [];
 		this.swipeCoord = [0, 0];
@@ -53,6 +61,19 @@ export class NavComponent {
 		this.auth.setUser(null);
 		localStorage.clear();
 		this.cartService.clearCart();
+		this.ws.killSocket();
+		const accessToken = localStorage.getItem('accessToken')
+		let socket;
+		if (accessToken) {
+			socket = io(environment.socketServer, {
+				extraHeaders: {
+					Authorization: 'Bearer ' + accessToken
+				}
+			});
+		} else {
+			socket = io(environment.socketServer);
+		}
+		this.ws.setSocket(socket);
 		this.router.navigate(['/']);
 	}
 

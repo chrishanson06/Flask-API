@@ -5,6 +5,9 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from coinbase_commerce.error import WebhookInvalidPayload, SignatureVerificationError
 from coinbase_commerce.webhook import Webhook
 
+from database.models import Order
+
+from app import socketio
 from resources.utils import calculate_order_amount
 
 import json
@@ -15,22 +18,23 @@ from secret import coinbase_commerce_shared_secret
 class CoinbaseChargeApi(Resource):
 	@jwt_required(optional=True)
 	def post(self):
-		data = json.loads(request.data)
+		data = request.get_json()
 		if not data:
 			return ''
-		price = calculate_order_amount(data)
-		
+		order = Order.objects.get(id=data.get('order'))
+		amount = calculate_order_amount(order.products)
 		charge_info = {
 			'name': 'Test Charge',
 			'description': 'Test Description',
 			'local_price': {
-				'amount': price,
+				'amount': amount,
 				'currency': 'USD'
 			},
 			'pricing_type': 'fixed_price',
-			#'redirect_url': '',
+			'redirect_url': 'https://stel.software/checkout/placed?id=' + str(order.pk), # CHANGE THIS
 			'metadata': {
-				'user': str(get_jwt_identity())
+				'user': get_jwt_identity(),
+				'order': str(order.pk)
 			}
 		}
 		charge = ccClient.charge.create(**charge_info)
@@ -49,13 +53,20 @@ class CoinbaseWebhookApi(Resource):
 		print('Received event: id={id}, type={type}'.format(id=event.id, type=event.type))
 
 		if event.type == 'charge:pending':
-			# TODO: set the order to pending
-			pass
+			order = Order(id=event.data.metadata.order)
+			order.orderStatus = 'pending'
+			order.save()
 		elif event.type == 'charge:confirmed':
-			# TODO: set the order to confirmed
-			pass
+			order = Order(id=event.data.metadata.order)
+			order.orderStatus = 'confirmed'
+			order.save()
 		elif event.type == 'charge:failed':
-			# TODO: set the order to failed
-			pass
+			order = Order(id=event.data.metadata.order)
+			order.orderStatus = 'failed'
+			order.save()
+		else:
+			return ok, 200
+
+		socketio.emit('order ' + str(order.pk), order.orderStatus)
 
 		return 'ok', 200

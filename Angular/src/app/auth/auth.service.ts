@@ -1,7 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { io } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
+import { WebsocketService } from '../core/services/websocket.service';
 import { User } from '../models/user';
 
 interface TokenPair {
@@ -24,7 +26,7 @@ export class AuthService {
 
 	private readonly authBase = environment.apiServer + 'auth/';
 
-	constructor(private http: HttpClient) {
+	constructor(private http: HttpClient, private ws: WebsocketService) {
 		this.userSubject = new BehaviorSubject<User | null>(null);
 		this.user$ = this.userSubject.asObservable();
 		const cachedUser = localStorage.getItem('user');
@@ -83,12 +85,16 @@ export class AuthService {
 
 	public setTokens(accessToken: string, refreshToken?: string): void {
 		localStorage.setItem('accessToken', accessToken);
-		const date = new Date();
-		date.setDate(date.getDate() + 7);
-		localStorage.setItem('tokenExpires', date.toString());
 		if (refreshToken) {
 			localStorage.setItem('refreshToken', refreshToken);
 		}
+		this.ws.killSocket();
+		const socket = io(environment.socketServer, {
+			extraHeaders: {
+				Authorization: 'Bearer ' + localStorage.getItem('accessToken')
+			}
+		});
+		this.ws.setSocket(socket);
 	}
 
 	public getUser(): Observable<User> {

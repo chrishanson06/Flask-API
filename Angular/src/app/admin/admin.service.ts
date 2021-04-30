@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Order } from '../models/order';
 import { User } from '../models/user';
 
 @Injectable({
@@ -20,6 +21,16 @@ export class AdminService {
 			return this.http.get<User[]>(this.adminBase + 'users', { headers });
 		} else {
 			return new Observable<User[]>();
+		}
+	}
+
+	public getAllOrders(): Observable<Order[]> {
+		const accessToken = localStorage.getItem('accessToken');
+		if (accessToken) {
+			const headers = new HttpHeaders().append('Authorization', 'Bearer ' + accessToken).append('Accept', 'application/json');
+			return this.http.get<Order[]>(this.adminBase + 'orders', { headers });
+		} else {
+			return new Observable<Order[]>();
 		}
 	}
 

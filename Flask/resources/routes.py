@@ -11,11 +11,12 @@ from .coinbase import CoinbaseChargeApi, CoinbaseWebhookApi
 from .braintree import BraintreeClientTokenApi, BraintreeWebhookApi
 
 from .product import ProductsApi, ProductApi
+from .order import OrdersApi, OrderApi
 from .cart import CartApi
 
 import resources.sockets
 
-from .admin import AdminApi, AdminUsersApi, AdminUserApi
+from .admin import AdminApi, AdminUsersApi, AdminUserApi, AdminOrdersApi, AdminOrderApi
 
 import resources.sockets
 
@@ -35,11 +36,16 @@ def initialize_routes(api, base):
 	api.add_resource(ProductsApi, base + 'product/products')
 	api.add_resource(ProductApi, base + 'product/product/<id>')
 
+	api.add_resource(OrdersApi, base + 'order/orders')
+	api.add_resource(OrderApi, base + 'order/order/<id>')
+
 	api.add_resource(CartApi, base + 'cart/cart')
 
 	api.add_resource(AdminApi, base + 'admin/admin')
 	api.add_resource(AdminUsersApi, base + 'admin/users')
 	api.add_resource(AdminUserApi, base + 'admin/user/<id>')
+	api.add_resource(AdminOrdersApi, base + 'admin/orders')
+	api.add_resource(AdminOrderApi, base + 'admin/order/<id>')
 
 	api.add_resource(PaymentIntentApi, base + 'payment/stripePaymentIntent')
 	api.add_resource(StripeApi, base + 'payment/stripe')
