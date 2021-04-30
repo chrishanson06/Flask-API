@@ -31,7 +31,7 @@ class CoinbaseChargeApi(Resource):
 				'currency': 'USD'
 			},
 			'pricing_type': 'fixed_price',
-			'redirect_url': 'https://stel.software/checkout/placed?order=' + str(order.pk), # CHANGE THIS
+			'redirect_url': 'https://stel.software/checkout/placed?id=' + str(order.pk), # CHANGE THIS
 			'metadata': {
 				'user': get_jwt_identity(),
 				'order': str(order.pk)

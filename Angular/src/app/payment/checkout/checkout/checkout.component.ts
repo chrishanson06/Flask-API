@@ -256,7 +256,8 @@ export class CheckoutComponent implements OnInit {
 				} else {
 					// The payment succeeded!
 					console.log('success');
-					this.router.navigate(['/checkout/placed'], { queryParams: {order: this.orderID} });
+					this.cartService.clearCart();
+					this.router.navigate(['/checkout/placed'], { queryParams: {id: this.orderID} });
 				}
 			});
 		}
@@ -279,7 +280,8 @@ export class CheckoutComponent implements OnInit {
 
 			const pack = { payment_method_nonce: payload.nonce, order: this.orderID, deviceData: this.deviceData };
 			this.http.post<any>(environment.apiServer + 'payment/braintreeClientToken', pack).toPromise().then(res => {
-				this.router.navigate(['/checkout/placed'], { queryParams: {order: this.orderID} });
+				this.cartService.clearCart();
+				this.router.navigate(['/checkout/placed'], { queryParams: {id: this.orderID} });
 			});
 		}).catch((error) => {
 			console.log(error);
@@ -295,7 +297,14 @@ export class CheckoutComponent implements OnInit {
 		this.cardholdersName = event.target.value;
 	}
 
-	getAddressDetails() {
+	payWithCoinbase(): void {
+		if (this.coinbaseIntent?.hosted_url) {
+			this.cartService.clearCart();
+			window.location.href = this.coinbaseIntent?.hosted_url;
+		}
+	}
+
+	private getAddressDetails() {
 		const addresses = {
 			shipping: {
 				name: this.addressForm.get('fullName')?.value,

@@ -166,7 +166,9 @@
 			
 			</form>
 			
-			<a *ngIf="coinbaseIntent !== null" [href]="coinbaseIntent?.hosted_url">Pay with cryptocurrency</a>
+			<div *ngIf="coinbaseIntent !== null">
+				<button mat-flat-button (click)='payWithCoinbase()'>Pay with cryptocurrency</button>
+			</div>
 		</section>
 	</mat-step>
 </mat-vertical-stepper>
