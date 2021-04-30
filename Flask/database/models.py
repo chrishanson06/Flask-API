@@ -45,9 +45,23 @@ class User(db.Document):
 			'cart': mappedCart
 		}
 
-class Product(db.Document):
+class Vendor(db.Document):
+	owner = db.ReferenceField('User')
 	name = db.StringField()
 	slug = db.StringField(unique=True)
+
+	def serialize(self):
+		return {
+			'id': str(self.pk),
+			'owner': str(self.owner.pk),
+			'name': self.name,
+			'slug': self.slug
+		}
+
+class Product(db.Document):
+	name = db.StringField()
+	slug = db.StringField()
+	vendor = db.ReferenceField('Vendor')
 	description = db.StringField()
 	shortDescription = db.StringField()
 	sku = db.StringField()
@@ -58,6 +72,7 @@ class Product(db.Document):
 			'id': str(self.pk),
 			'name': self.name,
 			'slug': self.slug,
+			'vendor': str(self.vendor.pk),
 			'description': self.description,
 			'shortDescription': self.shortDescription,
 			'sku': self.sku,
