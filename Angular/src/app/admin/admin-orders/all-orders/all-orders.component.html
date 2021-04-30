@@ -1,0 +1,37 @@
+<div *ngFor="let order of orders">
+	<div *ngIf="order.orderStatus !== 'pending'">
+		<p>ID: {{ order.id }}</p>
+		<p>Status: {{ order.orderStatus }}</p>
+		<mat-accordion>
+			<mat-expansion-panel>
+				<mat-expansion-panel-header>
+					<mat-panel-title>Billing Info</mat-panel-title>
+				</mat-expansion-panel-header>
+				City: {{ order.addresses.billing.city }}<br />
+				Country: {{ order.addresses.billing.country }}<br />
+				Name: {{ order.addresses.billing.name }}<br />
+				Phone Number: {{ order.addresses.billing.phoneNumber }}<br />
+				Region: {{ order.addresses.billing.region }}<br />
+				Street 1: {{ order.addresses.billing.street1 }}<br />
+				Street 2: {{ order.addresses.billing.street2 }}<br />
+				ZIP: {{ order.addresses.billing.zip }}<br /><br />
+
+			</mat-expansion-panel>
+			<mat-expansion-panel>
+				<mat-expansion-panel-header>
+					<mat-panel-title>Shipping Info</mat-panel-title>
+				</mat-expansion-panel-header>
+				Shipping:<br />
+				City: {{ order.addresses.shipping.city }}<br />
+				Country: {{ order.addresses.shipping.country }}<br />
+				Name: {{ order.addresses.shipping.name }}<br />
+				Phone Number: {{ order.addresses.shipping.phoneNumber }}<br />
+				Region: {{ order.addresses.shipping.region }}<br />
+				Street 1: {{ order.addresses.shipping.street1 }}<br />
+				Street 2: {{ order.addresses.shipping.street2 }}<br />
+				ZIP: {{ order.addresses.shipping.zip }}<br /><br />
+			</mat-expansion-panel>
+		</mat-accordion>
+		<hr />
+	</div>
+</div>
