@@ -12,13 +12,16 @@ from flask_mail import Mail
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_restful_swagger import swagger
+from flask_apscheduler import APScheduler
 
 from database.db import initialize_db
+from tasks.tasks import initialize_tasks
 from resources.errors import errors
 
 import stripe
 from coinbase_commerce.client import Client
-from secret import stripe_sk, coinbase_commerce_api_key
+import braintree
+from secret import stripe_sk, coinbase_commerce_api_key, braintree_merchant_id, braintree_public_key, braintree_private_key
 
 import os
 
@@ -26,6 +29,14 @@ PRODUCTION = False
 
 stripe.api_key = stripe_sk
 ccClient = Client(api_key=coinbase_commerce_api_key)
+braintreeGateway = braintree.BraintreeGateway(
+	braintree.Configuration(
+		braintree.Environment.Sandbox,
+		merchant_id=braintree_merchant_id,
+		public_key=braintree_public_key,
+		private_key=braintree_private_key
+	)
+)
 
 app = Flask(__name__)
 if PRODUCTION:
@@ -55,6 +66,8 @@ else:
 	socketResources = "http://localhost:4200"
 	base = '/api/'
 
+app.config['SCHEDULER_API_ENABLED'] = True
+
 mail = Mail(app)
 
 cors = CORS(app, resources=resources)
@@ -63,9 +76,14 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 socketio = SocketIO(app, cors_allowed_origins=socketResources)
 limiter = Limiter(app, key_func=get_remote_address, default_limits=["2500 per day", "250 per hour"])
+scheduler = APScheduler()
+
+scheduler.init_app(app)
 
 initialize_db(app)
 
 from resources.routes import initialize_routes
 
 initialize_routes(api, base)
+
+initialize_tasks(scheduler)

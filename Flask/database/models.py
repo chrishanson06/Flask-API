@@ -5,7 +5,7 @@ Models to serialize between MongoDB and Python
 from .db import db
 from flask_bcrypt import generate_password_hash, check_password_hash
 
-import random, string
+import random, string, datetime
 
 class CartItem(db.EmbeddedDocument):
 	product = db.ReferenceField('Product')
@@ -14,10 +14,6 @@ class CartItem(db.EmbeddedDocument):
 	def serialize(self):
 		return {
 			'id': str(self.product.pk),
-			# 'vendor': str(self.product.vendor.pk),
-			# 'vendorImg': self.product.vendor.profileImg,
-			# 'vendorName': self.product.vendor.name,
-			# 'vendorSlug': self.product.vendor.slug,
 			'name': self.product.name,
 			'price': float(self.product.price),
 			'qty': self.qty
@@ -30,11 +26,10 @@ class User(db.Document):
 	admin = db.BooleanField()
 
 	cart = db.ListField(db.EmbeddedDocumentField('CartItem'))
-	isVendor = db.BooleanField()
 
 	def hash_password(self):
-		chars = string.ascii_letters + string.digits + string.punctuation
-		size = 16
+		chars = string.ascii_letters + string.punctuation
+		size = 12
 		self.salt = ''.join(random.choice(chars) for x in range(size))
 		self.password = generate_password_hash(self.password + self.salt).decode('utf8')
 
@@ -47,42 +42,16 @@ class User(db.Document):
 			'id': str(self.pk),
 			'email': self.email,
 			'admin': True if self.admin else False,
-			'cart': mappedCart,
-			'isVendor': self.isVendor
-		}
-
-class Vendor(db.Document):
-	owner = db.ReferenceField('User')
-	name = db.StringField()
-	slug = db.StringField()
-	profileImg = db.StringField()
-	phoneNumber = db.StringField()
-	email = db.EmailField()
-	status = db.StringField() # Can be 'applied, 'pending', 'accepted', 'declined', 'deactivated'
-	products = db.ListField(db.ReferenceField('Product'))
-
-	def getProducts(self):
-		mappedProducts = list(map(lambda p: p.serialize(), self.products))
-		return mappedProducts
-
-	def serialize(self):
-		mappedProducts = list(map(lambda p: str(p.pk), self.products))
-		return {
-			'id': str(self.pk),
-			'name': self.name,
-			'slug': self.slug,
-			'profileImg': self.profileImg,
-			'status': self.status,
-			'products': mappedProducts
+			'cart': mappedCart
 		}
 
 class Product(db.Document):
 	name = db.StringField()
+	slug = db.StringField(unique=True)
 	description = db.StringField()
 	shortDescription = db.StringField()
 	sku = db.StringField()
 	price = db.DecimalField(precision=2)
-	vendor = db.ReferenceField('Vendor')
 
 	def serialize(self):
 		return {
@@ -92,20 +61,25 @@ class Product(db.Document):
 			'description': self.description,
 			'shortDescription': self.shortDescription,
 			'sku': self.sku,
-			'price': float(self.price),
-			'vendor': self.vendor.serialize()
+			'price': float(self.price)
 		}
 
 class Order(db.Document):
 	orderer = db.ReferenceField('User')
-	orderStatus = db.StringField() # can be 'pending', 'processing', 'shipped', 'completed'
+	orderStatus = db.StringField() # can be 'not-placed', 'pending', 'paid', 'shipped', 'completed', 'failed'
 	products = db.ListField(db.EmbeddedDocumentField('CartItem'))
+	addresses = db.DictField()
+	createdAt = db.DateTimeField(default=datetime.datetime.now)
 
 	def serialize(self):
 		mappedProducts = list(map(lambda p: p.serialize(), self.products))
+		orderer = None
+		if self.orderer:
+			orderer = str(self.orderer.pk)
 		return {
 			'id': str(self.pk),
-			'orderer': str(self.orderer.pk),
+			'orderer': orderer,
 			'orderStatus': self.orderStatus,
-			'products': mappedProducts
+			'products': mappedProducts,
+			'addresses': self.addresses
 		}

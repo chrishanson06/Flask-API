@@ -1,9 +1,8 @@
-import { CartItem } from "./cart-item";
+import { Product } from "./product";
 
 export interface User {
 	id?: string;
 	email?: string;
 	admin?: boolean;
-	cart?: CartItem[];
-	isVendor?: boolean;
+	cart: Product[];
 }

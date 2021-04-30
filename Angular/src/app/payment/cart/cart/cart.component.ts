@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CartItem } from 'src/app/models/cart-item';
 import { Product } from 'src/app/models/product';
 import { CartService } from '../cart.service';
@@ -14,7 +15,7 @@ interface CartProduct {
 	templateUrl: './cart.component.html',
 	styleUrls: ['./cart.component.scss']
 })
-export class CartComponent implements OnInit {
+export class CartComponent implements OnInit, OnDestroy {
 
 	@Input() appearance: string;
 
@@ -22,38 +23,55 @@ export class CartComponent implements OnInit {
 	cartSize: number;
 
 	private firstPass: boolean;
+	private subs: Subscription[];
 
 	constructor(private cartService: CartService, private http: HttpClient) {
 		this.appearance = '';
 		this.products = [];
 		this.cartSize = 0;
 		this.firstPass = true;
+		this.subs = [];
 	}
 
 	ngOnInit(): void {
-		this.cartService.cart$.subscribe(cart => {
-			this.cartSize = 0;
-			for (let i = 0; i < cart.length; i++) {
-				this.cartSize += cart[i].qty;
-			}
-			if (this.firstPass) {
-				this.firstPass = false;
-				const builtLocalStorage: CartItem[] = [];
-				this.cartService.getCart().toPromise().then(products => {
-					if (products) {
-						this.products = products;
-						localStorage.setItem('cart', JSON.stringify(products));
-					}
-				});
-			} else {
+		if (this.appearance === 'button') {
+			this.subs.push(this.cartService.cart$.subscribe(cart => {
+				this.cartSize = 0;
+				for (let i = 0; i < cart.length; i++) {
+					this.cartSize += cart[i].qty;
+				}
+				if (this.firstPass) {
+					this.firstPass = false;
+					const builtLocalStorage: CartItem[] = [];
+					this.cartService.getCart().toPromise().then(products => {
+						if (products) {
+							this.products = products;
+							localStorage.setItem('cart', JSON.stringify(products));
+						}
+					});
+				} else {
+					this.products = cart;
+				}
+			}));
+		} else {
+			this.subs.push(this.cartService.cart$.subscribe(cart => {
 				this.products = cart;
-			}
-		});
+			}))
+		}
+	}
+
+	ngOnDestroy(): void {
+		this.subs.forEach(sub => sub.unsubscribe());
 	}
 
 	reduceProduct(id: string, event: any): void {
 		event.stopPropagation();
 		this.cartService.removeFromCart(id, 1);
+	}
+
+	increaseProduct(id: string, event: any): void {
+		event.stopPropagation();
+		this.cartService.addToCart({ id });
 	}
 
 }

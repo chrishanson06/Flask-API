@@ -11,7 +11,7 @@ from mongoengine.errors import FieldDoesNotExist, NotUniqueError, DoesNotExist
 from jwt.exceptions import ExpiredSignatureError, DecodeError, InvalidTokenError
 from resources.errors import SchemaValidationError, EmailAlreadyExistsError, UnauthorizedError, InternalServerError, EmailDoesnotExistsError, BadTokenError
 
-from database.models import User
+from database.models import User, Order
 
 class AdminApi(Resource):
 	'''
@@ -93,3 +93,69 @@ class AdminUserApi(Resource):
 		except Exception:
 			raise InternalServerError
 	
+class AdminOrdersApi(Resource):
+	'''
+	Get all orders
+	'''
+	@jwt_required()
+	def get(self):
+		try:
+			user = User.objects.get(id=get_jwt_identity())
+			if not user.admin:
+				raise UnauthorizedError
+			orders = Order.objects
+			mappedOrders = list(map(lambda o: o.serialize(), orders))
+			return jsonify(mappedOrders)
+		except UnauthorizedError:
+			raise UnauthorizedError
+		except Exception:
+			raise InternalServerError
+
+class AdminOrderApi(Resource):
+	'''
+	Get order
+	'''
+	@jwt_required()
+	def get(self, id):
+		try:
+			user = User.objects.get(id=get_jwt_identity())
+			if not user.admin:
+				raise UnauthorizedError
+			order = Order.objects.get(id=id)
+			return jsonify(order)
+		except UnauthorizedError:
+			raise UnauthorizedError
+		except Exception:
+			raise InternalServerError
+	'''
+	Update order
+	'''
+	@jwt_required()
+	def put(self, id):
+		try:
+			user = User.objects.get(id=get_jwt_identity())
+			if not user.admin:
+				raise UnauthorizedError
+			order = Order.objects.get(id=id)
+			order.update(**request.get_json())
+			return 'ok'
+		except UnauthorizedError:
+			raise UnauthorizedError
+		except Exception:
+			raise InternalServerError
+	'''
+	Delete order
+	'''
+	@jwt_required()
+	def delete(self, id):
+		try:
+			user = User.objects.get(id=get_jwt_identity())
+			if not user.admin:
+				raise UnauthorizedError
+			order = Order.objects.get(id=id)
+			order.delete()
+			return 'ok'
+		except UnauthorizedError:
+			raise UnauthorizedError
+		except Exception:
+			raise InternalServerError

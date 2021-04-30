@@ -61,8 +61,6 @@ class ProductApi(Resource):
 			return 'ok', 200
 		except InvalidQueryError:
 			raise SchemaValidationError
-		except DoesNotExist:
-			raise UpdatingMovieError
 		except UnauthorizedError:
 			raise UnauthorizedError
 		except Exception:
@@ -79,8 +77,6 @@ class ProductApi(Resource):
 			product = Product.objects.get(id=id)
 			product.delete()
 			return 'ok', 200
-		except DoesNotExist:
-			raise DeletingMovieError
 		except UnauthorizedError:
 			raise UnauthorizedError
 		except Exception:

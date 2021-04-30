@@ -6,17 +6,19 @@ from .auth import SignupApi, LoginApi, ForgotPassword, ResetPassword, TokenRefre
 from .file import UploaderApi, MediaApi, SingleMediaApi
 from .cart import CartApi
 
-from .coinbase import CoinbaseChargeApi, CoinbaseWebhookApi
 from .stripe import PaymentIntentApi, StripeApi
+from .coinbase import CoinbaseChargeApi, CoinbaseWebhookApi
+from .braintree import BraintreeClientTokenApi, BraintreeWebhookApi
 
-from .vendor import MyVendorsApi, MyVendorApi
 from .product import ProductsApi, ProductApi
+from .order import OrdersApi, OrderApi
 from .cart import CartApi
 
 import resources.sockets
 
-from .admin import AdminApi, AdminUsersApi, AdminUserApi
-from .stripe import PaymentIntentApi, StripeApi
+from .admin import AdminApi, AdminUsersApi, AdminUserApi, AdminOrdersApi, AdminOrderApi
+
+import resources.sockets
 
 def initialize_routes(api, base):
 	api.add_resource(SignupApi, base + 'auth/signup')
@@ -31,19 +33,23 @@ def initialize_routes(api, base):
 	api.add_resource(MediaApi, base + 'file/media')
 	api.add_resource(SingleMediaApi, base + 'file/media/<filename>')
 
-	api.add_resource(MyVendorsApi, base + 'vendor/myVendors')
-	api.add_resource(MyVendorApi, base + 'vendor/myVendor')
-
 	api.add_resource(ProductsApi, base + 'product/products')
 	api.add_resource(ProductApi, base + 'product/product/<id>')
+
+	api.add_resource(OrdersApi, base + 'order/orders')
+	api.add_resource(OrderApi, base + 'order/order/<id>')
 
 	api.add_resource(CartApi, base + 'cart/cart')
 
 	api.add_resource(AdminApi, base + 'admin/admin')
 	api.add_resource(AdminUsersApi, base + 'admin/users')
 	api.add_resource(AdminUserApi, base + 'admin/user/<id>')
+	api.add_resource(AdminOrdersApi, base + 'admin/orders')
+	api.add_resource(AdminOrderApi, base + 'admin/order/<id>')
 
 	api.add_resource(PaymentIntentApi, base + 'payment/stripePaymentIntent')
 	api.add_resource(StripeApi, base + 'payment/stripe')
 	api.add_resource(CoinbaseChargeApi, base + 'payment/coinbasePaymentIntent')
 	api.add_resource(CoinbaseWebhookApi, base + 'payment/coinbase')
+	api.add_resource(BraintreeClientTokenApi, base + 'payment/braintreeClientToken')
+	api.add_resource(BraintreeWebhookApi, base + 'payment/braintree')
