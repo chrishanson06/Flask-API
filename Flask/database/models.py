@@ -66,16 +66,19 @@ class Product(db.Document):
 
 class Order(db.Document):
 	orderer = db.ReferenceField('User')
-	orderStatus = db.StringField() # can be 'not-placed', 'pending', 'processing', 'shipped', 'completed'
+	orderStatus = db.StringField() # can be 'not-placed', 'pending', 'paid', 'shipped', 'completed', 'failed'
 	products = db.ListField(db.EmbeddedDocumentField('CartItem'))
 	addresses = db.DictField()
 	createdAt = db.DateTimeField(default=datetime.datetime.now)
 
 	def serialize(self):
 		mappedProducts = list(map(lambda p: p.serialize(), self.products))
+		orderer = None
+		if self.orderer:
+			orderer = str(self.orderer.pk)
 		return {
 			'id': str(self.pk),
-			'orderer': str(self.orderer.pk),
+			'orderer': orderer,
 			'orderStatus': self.orderStatus,
 			'products': mappedProducts,
 			'addresses': self.addresses

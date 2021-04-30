@@ -30,13 +30,9 @@ class OrdersApi(Resource):
 			items = body.get('products')
 			products = []
 			for item in items:
-				try:
-					product = Product.objects.get(id=item['id'])
-					products.append(CartItem(product=product, qty=item['qty']))
-				except Exception:
-					# Product does not exist
-					continue
-			order = Order(orderer=get_jwt_identity(), orderStatus='pending', addresses=body.get('addresses'), products=products)
+				product = Product.objects.get(id=item['id'])
+				products.append(CartItem(product=product, qty=item['qty']))
+			order = Order(orderer=get_jwt_identity(), orderStatus='not placed', addresses=body.get('addresses'), products=products)
 			order.save()
 			id = order.id
 			return {'id': str(id)}, 200
@@ -50,8 +46,13 @@ class OrdersApi(Resource):
 
 class OrderApi(Resource):
 	'''
-	Get the order
+	Get the order. Orders with non signed in users are only presented the order status for shipping concerns.
 	'''
+	@jwt_required(optional=True)
 	def get(self, id):
-		product = Product.objects.get(id=id)
-		return jsonify(product.serialize())
+		if (get_jwt_identity()):
+			product = Order.objects.get(id=id, orderer=get_jwt_identity())
+			return jsonify(product.serialize())
+		else:
+			product = Order.objects.get(id=id)
+			return { 'orderStatus': product.orderStatus }

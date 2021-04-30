@@ -8,7 +8,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from resources.errors import InternalServerError
 
-from database.models import Order, Product
+from database.models import Order
 
 from resources.utils import calculate_order_amount
 
@@ -65,17 +65,16 @@ class StripeApi(Resource):
 		except ValueError:
 			return '', 400
 
-		print(event.type)
-		print(event.data.object)
 		if event.type == 'payment_intent.succeeded':
 			payment_intent = event.data.object # contains a stripe.PaymentIntent
-			# Then define and call a method to handle the successful payment intent.
-			# handle_payment_intent_succeeded(payment_intent)
-		elif event.type == 'payment_method.attached':
-			payment_method = event.data.object # contains a stripe.PaymentMethod
-			# Then define and call a method to handle the successful attachment of a PaymentMethod.
-			# handle_payment_method_attached(payment_method)
-			# ... handle other event types
+			order = Order(id=payment_intent['metadata']['Order object'])
+			order.orderStatus = 'paid'
+			order.save()
+		elif event.type == 'payment_intent.failed':
+			payment_intent = event.data.object # contains a stripe.PaymentIntent
+			order = Order(id=payment_intent['metadata']['Order object'])
+			order.orderStatus = 'failed'
+			order.save()
 		else:
 			print('Unhandled event type {}'.format(event.type))
 

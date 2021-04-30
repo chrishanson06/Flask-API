@@ -7,6 +7,9 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { User } from 'src/app/models/user';
 import { Router } from '@angular/router';
 import { CartService } from 'src/app/payment/cart/cart.service';
+import { WebsocketService } from '../services/websocket.service';
+import { environment } from 'src/environments/environment';
+import { io } from 'socket.io-client';
 
 interface LinkPair {
 	link: string;
@@ -35,7 +38,7 @@ export class NavComponent {
 	private swipeCoord: number[];
 	private swipeTime: number;
 
-	constructor(private breakpointObserver: BreakpointObserver, private auth: AuthService, private router: Router, private cartService: CartService) {
+	constructor(private breakpointObserver: BreakpointObserver, private auth: AuthService, private router: Router, private cartService: CartService, private ws: WebsocketService) {
 		this.user = null;
 		this.auth.user$.subscribe(user => {
 			this.user = user;
@@ -53,6 +56,13 @@ export class NavComponent {
 		this.auth.setUser(null);
 		localStorage.clear();
 		this.cartService.clearCart();
+		this.ws.killSocket();
+		const socket = io(environment.socketServer, {
+			extraHeaders: {
+				Authorization: 'Bearer ' + localStorage.getItem('accessToken')
+			}
+		});
+		this.ws.setSocket(socket);
 		this.router.navigate(['/']);
 	}
 

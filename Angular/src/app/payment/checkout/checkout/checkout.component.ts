@@ -7,6 +7,7 @@ import { CartItem } from 'src/app/models/cart-item';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 interface Intent {
 	clientSecret?: string;
@@ -50,7 +51,7 @@ export class CheckoutComponent implements OnInit {
 	
 	private orderID: string;
 
-	constructor(private http: HttpClient, private cartService: CartService) {
+	constructor(private http: HttpClient, private cartService: CartService, private router: Router) {
 		this.stripe = Stripe(environment.stripeKey);
 		this.products = [];
 		this.stripeIntent = null;
@@ -247,40 +248,17 @@ export class CheckoutComponent implements OnInit {
 			this.stripe.confirmCardPayment(clientSecret, {
 				payment_method: {
 					card: card,
-					billing_details: {
-						name: addresses.billing.name,
-						address: {
-							line1: addresses.billing.street1,
-							line2: addresses.billing.street2,
-							city: addresses.billing.city,
-							country: addresses.billing.country,
-							state: addresses.billing.region,
-							postal_code: addresses.billing.zip
-						},
-						phone: addresses.billing.phoneNumber
-					}
-				},
-				shipping: {
-					name: addresses.shipping.name,
-					address: {
-						line1: addresses.shipping.street1,
-						line2: addresses.shipping.street2,
-						city: addresses.shipping.city,
-						country: addresses.shipping.country,
-						state: addresses.shipping.region,
-						postal_code: addresses.shipping.zip
-					},
-					phone: addresses.shipping.phoneNumber
 				}
-			}).then(function (result: any) {
+			}).then((result: any) => {
 				if (result.error) {
 					// Show error to your customer
 					console.log('fail');
 				} else {
 					// The payment succeeded!
 					console.log('success');
+					this.router.navigate(['/checkout/placed'], { queryParams: {order: this.orderID} });
 				}
-			})
+			});
 		}
 	}
 
@@ -301,7 +279,7 @@ export class CheckoutComponent implements OnInit {
 
 			const pack = { payment_method_nonce: payload.nonce, order: this.orderID, deviceData: this.deviceData };
 			this.http.post<any>(environment.apiServer + 'payment/braintreeClientToken', pack).toPromise().then(res => {
-				console.log(res);
+				this.router.navigate(['/checkout/placed'], { queryParams: {order: this.orderID} });
 			});
 		}).catch((error) => {
 			console.log(error);

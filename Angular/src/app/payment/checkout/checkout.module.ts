@@ -12,10 +12,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { CheckoutRedirectComponent } from './checkout-redirect/checkout-redirect.component';
 
 @NgModule({
 	declarations: [
-		CheckoutComponent
+		CheckoutComponent,
+  CheckoutRedirectComponent
 	],
 	imports: [
 		CommonModule,

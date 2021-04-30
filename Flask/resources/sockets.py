@@ -5,6 +5,8 @@ Socket routes
 from flask_socketio import send, emit
 from app import socketio
 
+from database.models import Order
+
 @socketio.on('connect')
 def test_connect():
 	print('Client Connected')

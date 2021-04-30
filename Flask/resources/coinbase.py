@@ -30,7 +30,7 @@ class CoinbaseChargeApi(Resource):
 				'currency': 'USD'
 			},
 			'pricing_type': 'fixed_price',
-			#'redirect_url': '',
+			'redirect_url': 'https://stel.software/checkout/placed?order=' + str(order.pk), # CHANGE THIS
 			'metadata': {
 				'user': get_jwt_identity(),
 				'order': str(order.pk)
@@ -52,13 +52,16 @@ class CoinbaseWebhookApi(Resource):
 		print('Received event: id={id}, type={type}'.format(id=event.id, type=event.type))
 
 		if event.type == 'charge:pending':
-			# TODO: set the order to pending
-			pass
+			order = Order(id=event.data.metadata.order)
+			order.orderStatus = 'pending'
+			order.save()
 		elif event.type == 'charge:confirmed':
-			# TODO: set the order to confirmed
-			pass
+			order = Order(id=event.data.metadata.order)
+			order.orderStatus = 'confirmed'
+			order.save()
 		elif event.type == 'charge:failed':
-			# TODO: set the order to failed
-			pass
+			order = Order(id=event.data.metadata.order)
+			order.orderStatus = 'failed'
+			order.save()
 
 		return 'ok', 200
