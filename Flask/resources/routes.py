@@ -11,6 +11,7 @@ from .coinbase import CoinbaseChargeApi, CoinbaseWebhookApi
 from .braintree import BraintreeClientTokenApi, BraintreeWebhookApi
 
 from .product import ProductsApi, ProductApi
+from .order import OrdersApi, OrderApi
 from .cart import CartApi
 
 import resources.sockets
@@ -34,6 +35,9 @@ def initialize_routes(api, base):
 
 	api.add_resource(ProductsApi, base + 'product/products')
 	api.add_resource(ProductApi, base + 'product/product/<id>')
+
+	api.add_resource(OrdersApi, base + 'order/orders')
+	api.add_resource(OrderApi, base + 'order/order/<id>')
 
 	api.add_resource(CartApi, base + 'cart/cart')
 

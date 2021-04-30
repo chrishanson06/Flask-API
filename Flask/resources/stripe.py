@@ -8,7 +8,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from resources.errors import InternalServerError
 
-from database.models import Product
+from database.models import Order, Product
 
 from resources.utils import calculate_order_amount
 
@@ -21,15 +21,31 @@ class PaymentIntentApi(Resource):
 	'''
 	Create payment intent
 	'''
+	@jwt_required(optional=True)
 	def post(self):
 		try:
-			data = json.loads(request.data)
+			data = request.get_json()
 			if not data:
 				return ''
+			order = Order.objects.get(id=data.get('order'))
+			shipping = {
+				'address': {
+					'line1': order.addresses['shipping']['street1'],
+					'line2': order.addresses['shipping']['street2'],
+					'city': order.addresses['shipping']['city'],
+					'state': order.addresses['shipping']['region'],
+					'country': order.addresses['shipping']['country'],
+					'postal_code': order.addresses['shipping']['zip']
+				},
+				'name': order.addresses['shipping']['name'],
+				'phone': order.addresses['shipping']['phoneNumber']
+			}
+			amount = int(calculate_order_amount(order.products) * 100)
 			intent = stripe.PaymentIntent.create(
-				amount=int(calculate_order_amount(data) * 100),
-				currency='usd'
-				# TODO: description
+				amount=amount,
+				currency='usd',
+				shipping=shipping,
+				metadata={order: str(order.pk)}
 			)
 			return jsonify({
 				'clientSecret': intent['client_secret']

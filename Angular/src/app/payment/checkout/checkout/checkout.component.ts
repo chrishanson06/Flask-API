@@ -19,6 +19,10 @@ interface CountryPair {
 	code: string;
 }
 
+interface Id {
+	id: string;
+}
+
 @Component({
 	selector: 'app-checkout',
 	templateUrl: './checkout.component.html',
@@ -42,6 +46,10 @@ export class CheckoutComponent implements OnInit {
 	filteredCountries: Observable<CountryPair[]>;
 	filteredCountries2: Observable<CountryPair[]>;
 
+	cantEdit: boolean;
+	
+	private orderID: string;
+
 	constructor(private http: HttpClient, private cartService: CartService) {
 		this.stripe = Stripe(environment.stripeKey);
 		this.products = [];
@@ -51,6 +59,10 @@ export class CheckoutComponent implements OnInit {
 		this.hostedFieldsInstance = null;
 		this.cardholdersName = '';
 		this.deviceData = '';
+
+		this.cantEdit = false;
+
+		this.orderID = '';
 
 		this.addressForm = new FormGroup({
 			fullName: new FormControl('', [Validators.required]),
@@ -97,11 +109,22 @@ export class CheckoutComponent implements OnInit {
 			this.countries = res;
 		});
 
-		const headers = new HttpHeaders().append('Content-Type', 'application/json');
-
 		this.cartService.getCart().toPromise().then(cart => {
 			this.products = cart;
-			this.http.post<Intent>(environment.apiServer + 'payment/stripePaymentIntent', JSON.stringify(this.products), { headers })
+		});
+	}
+
+	private _filter(value: string): CountryPair[] {
+		const filterValue = value.toLowerCase();
+		return this.countries.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
+	}
+
+	generateIntents(): void {
+		this.cantEdit = true;
+		const headers = new HttpHeaders().append('Content-Type', 'application/json');
+		this.http.post<Id>(environment.apiServer + 'order/orders', {addresses: this.getAddressDetails(), products: this.products}).toPromise().then(orderID => {
+			this.orderID = orderID.id;
+			this.http.post<Intent>(environment.apiServer + 'payment/stripePaymentIntent', { order: orderID.id }, { headers })
 				.toPromise().then(intent => {
 					this.stripeIntent = intent;
 					const elements = this.stripe.elements();
@@ -210,20 +233,11 @@ export class CheckoutComponent implements OnInit {
 					}
 				});
 
-			this.http.post<Intent>(environment.apiServer + 'payment/coinbasePaymentIntent', JSON.stringify(this.products), { headers })
+			this.http.post<Intent>(environment.apiServer + 'payment/coinbasePaymentIntent', { order: orderID.id }, { headers })
 				.toPromise().then(intent => {
 					this.coinbaseIntent = intent;
 				});
 		});
-	}
-
-	private _filter(value: string): CountryPair[] {
-		const filterValue = value.toLowerCase();
-		return this.countries.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
-	}
-
-	generateIntents(): void {
-		
 	}
 
 	payWithCard(stripe: stripe.Stripe, card: stripe.elements.Element, clientSecret: string | undefined) {
@@ -285,7 +299,7 @@ export class CheckoutComponent implements OnInit {
 			__proto__: Object
 			*/
 
-			const pack = { payment_method_nonce: payload.nonce, items: this.products, addresses: this.getAddressDetails(), deviceData: this.deviceData };
+			const pack = { payment_method_nonce: payload.nonce, order: this.orderID, deviceData: this.deviceData };
 			this.http.post<any>(environment.apiServer + 'payment/braintreeClientToken', pack).toPromise().then(res => {
 				console.log(res);
 			});

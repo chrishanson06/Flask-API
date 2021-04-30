@@ -1,5 +1,5 @@
 <mat-vertical-stepper [linear]="true" #stepper>
-	<mat-step [stepControl]="addressForm" label="Shipping Address">
+	<mat-step [editable]="!cantEdit" [stepControl]="addressForm" label="Shipping Address">
 		<form [formGroup]="addressForm">
 			<mat-form-field appearance="fill">
 				<mat-label>Full Name</mat-label>
@@ -41,7 +41,7 @@
 			<button mat-button type="button" matStepperNext>Next</button>
 		</form>
 	</mat-step>
-	<mat-step [stepControl]="billingForm" label="Billing Address">
+	<mat-step [editable]="!cantEdit" [stepControl]="billingForm" label="Billing Address">
 		<form [formGroup]="billingForm">
 			<mat-form-field appearance="fill">
 				<mat-label>Full Name</mat-label>
@@ -81,7 +81,7 @@
 				<input matInput formControlName="phoneNumber" autocomplete="tel" required />
 			</mat-form-field>
 			<button mat-button type="button" matStepperPrevious>Back</button>
-			<button mat-button matStepperNext>Next</button>
+			<button mat-button matStepperNext (click)='generateIntents()'>Next</button>
 		</form>
 	</mat-step>
 	<mat-step>
@@ -168,6 +168,5 @@
 			
 			<a *ngIf="coinbaseIntent !== null" [href]="coinbaseIntent?.hosted_url">Pay with cryptocurrency</a>
 		</section>
-		<button mat-button type="button" matStepperPrevious>Previous</button>
 	</mat-step>
 </mat-vertical-stepper>
