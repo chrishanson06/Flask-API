@@ -7,6 +7,7 @@ from coinbase_commerce.webhook import Webhook
 
 from database.models import Order
 
+from app import socketio
 from resources.utils import calculate_order_amount
 
 import json
@@ -63,5 +64,9 @@ class CoinbaseWebhookApi(Resource):
 			order = Order(id=event.data.metadata.order)
 			order.orderStatus = 'failed'
 			order.save()
+		else:
+			return ok, 200
+
+		socketio.emit('order ' + str(order.pk), order.orderStatus)
 
 		return 'ok', 200

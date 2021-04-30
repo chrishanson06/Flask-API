@@ -10,6 +10,7 @@ from resources.errors import InternalServerError
 
 from database.models import Order
 
+from app import socketio
 from resources.utils import calculate_order_amount
 
 import json
@@ -77,5 +78,8 @@ class StripeApi(Resource):
 			order.save()
 		else:
 			print('Unhandled event type {}'.format(event.type))
+			return 'ok', 200
+
+		socketio.emit('order ' + str(order.pk), order.orderStatus)
 
 		return 'ok', 200
