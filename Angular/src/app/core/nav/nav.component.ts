@@ -42,6 +42,11 @@ export class NavComponent {
 		this.user = null;
 		this.auth.user$.subscribe(user => {
 			this.user = user;
+			if (user) {
+				this.cartService.getCart().toPromise().then(res => {
+					this.cartService.setCart(res);
+				});
+			}
 		});
 		this.links = [];
 		this.swipeCoord = [0, 0];
@@ -57,11 +62,17 @@ export class NavComponent {
 		localStorage.clear();
 		this.cartService.clearCart();
 		this.ws.killSocket();
-		const socket = io(environment.socketServer, {
-			extraHeaders: {
-				Authorization: 'Bearer ' + localStorage.getItem('accessToken')
-			}
-		});
+		const accessToken = localStorage.getItem('accessToken')
+		let socket;
+		if (accessToken) {
+			socket = io(environment.socketServer, {
+				extraHeaders: {
+					Authorization: 'Bearer ' + accessToken
+				}
+			});
+		} else {
+			socket = io(environment.socketServer);
+		}
 		this.ws.setSocket(socket);
 		this.router.navigate(['/']);
 	}
