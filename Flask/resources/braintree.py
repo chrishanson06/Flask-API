@@ -69,6 +69,8 @@ class BraintreeClientTokenApi(Resource):
 			'shipping': shipping
 		})
 		if result.is_success or result.transaction:
+			order.orderStatus = 'paid'
+			order.save()
 			return 'ok', 200
 		else:
 			raise InternalServerError
@@ -81,4 +83,4 @@ class BraintreeWebhookApi(Resource):
 		print(webhook_notification.kind) # "subscription_went_past_due"
 		print(webhook_notification.timestamp) # "Sun Jan 1 00:00:00 UTC 2012"
 
-		return Response(status=200)
+		return '', 200
