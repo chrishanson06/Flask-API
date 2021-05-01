@@ -26,6 +26,7 @@ class User(db.Document):
 	admin = db.BooleanField()
 
 	cart = db.ListField(db.EmbeddedDocumentField('CartItem'))
+	isVendor = db.BooleanField()
 
 	def hash_password(self):
 		chars = string.ascii_letters + string.punctuation
@@ -41,21 +42,30 @@ class User(db.Document):
 		return {
 			'id': str(self.pk),
 			'email': self.email,
-			'admin': True if self.admin else False,
-			'cart': mappedCart
+			'admin': self.admin,
+			'cart': mappedCart,
+			'isVendor': self.isVendor
 		}
 
 class Vendor(db.Document):
 	owner = db.ReferenceField('User')
 	name = db.StringField()
 	slug = db.StringField(unique=True)
+	status = db.StringField() # Can be 'applied', 'accepted', 'declined', 'deactivated'
+	products = db.ListField(db.ReferenceField('Product'))
+
+	def getProducts(self):
+		mappedProducts = list(map(lambda p: p.serialize(), self.products))
+		return mappedProducts
 
 	def serialize(self):
+		mappedProducts = list(map(lambda p: str(p.pk), self.products))
 		return {
 			'id': str(self.pk),
 			'owner': str(self.owner.pk),
 			'name': self.name,
-			'slug': self.slug
+			'slug': self.slug,
+			'products': mappedProducts
 		}
 
 class Product(db.Document):
@@ -72,7 +82,7 @@ class Product(db.Document):
 			'id': str(self.pk),
 			'name': self.name,
 			'slug': self.slug,
-			'vendor': str(self.vendor.pk),
+			'vendor': self.vendor.serialize(),
 			'description': self.description,
 			'shortDescription': self.shortDescription,
 			'sku': self.sku,
