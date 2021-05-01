@@ -19,7 +19,7 @@ export class AllOrdersComponent implements OnInit {
 		this.adminService.getAllOrders().toPromise().then(res => {
 			this.orders = res;
 			console.log(res);
-		})
+		});
 	}
 
 }

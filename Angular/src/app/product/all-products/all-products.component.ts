@@ -26,7 +26,7 @@ export class AllProductsComponent implements OnInit, OnDestroy {
 		this.subs.push(this.route.queryParams.subscribe(res => {
 			this.loading = true;
 			this.products = [];
-			this.productService.getAllProducts(res['s']).toPromise().then(products => {
+			this.productService.getAllProducts(res.s).toPromise().then(products => {
 				this.products = products;
 				this.loading = false;
 			});

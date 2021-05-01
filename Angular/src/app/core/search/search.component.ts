@@ -22,7 +22,7 @@ export class SearchComponent implements OnInit {
 
 	search(): void {
 		const search = this.searchGroup.get('search')?.value;
-		this.router.navigate(['/'], { queryParams: { s: search } })
+		this.router.navigate(['/'], { queryParams: { s: search } });
 	}
 
 }

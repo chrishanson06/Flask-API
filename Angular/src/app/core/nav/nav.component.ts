@@ -62,7 +62,7 @@ export class NavComponent {
 		localStorage.clear();
 		this.cartService.clearCart();
 		this.ws.killSocket();
-		const accessToken = localStorage.getItem('accessToken')
+		const accessToken = localStorage.getItem('accessToken');
 		let socket;
 		if (accessToken) {
 			socket = io(environment.socketServer, {

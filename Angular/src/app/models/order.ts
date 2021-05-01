@@ -1,4 +1,4 @@
-import { Product } from "./product";
+import { Product } from './product';
 
 export interface Order {
 	id?: string;
@@ -15,7 +15,7 @@ export interface Order {
 			street1?: string;
 			street2?: string;
 			zip?: string;
-		},
+		};
 		shipping: {
 			city?: string;
 			country?: string;
@@ -25,6 +25,6 @@ export interface Order {
 			street1?: string;
 			street2?: string;
 			zip?: string;
-		},
-	}
+		};
+	};
 }
