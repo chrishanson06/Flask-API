@@ -13,10 +13,10 @@ from database.models import Product, User
 
 class ProductsApi(Resource):
 	'''
-	Get all products according to search criteria
+	Get all products according to search term
 	'''
 	def get(self):
-		products = Product.objects
+		products = Product.objects.search_text(request.params.get('s')).order_by('$text_score')
 		mappedProducts = list(map(lambda p: p.serialize(), products))
 		return jsonify(mappedProducts)
 	'''

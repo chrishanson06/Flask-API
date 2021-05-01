@@ -53,6 +53,16 @@ class Product(db.Document):
 	sku = db.StringField()
 	price = db.DecimalField(precision=2)
 
+	meta = {
+		'indexes': [
+			{
+				'fields': ['$name', '$description'],
+				'default_language': 'english',
+				'weights': { 'name': 10, 'description': 2 }
+			}
+		]
+	}
+
 	def serialize(self):
 		return {
 			'id': str(self.pk),
