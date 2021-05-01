@@ -16,7 +16,14 @@ class ProductsApi(Resource):
 	Get all products according to search term
 	'''
 	def get(self):
-		products = Product.objects.search_text(request.params.get('s')).order_by('$text_score')
+		search = request.args.get('s')
+		print(search)
+		if search:
+			print('fire')
+			products = Product.objects.search_text(search).order_by('$text_score')
+		else:
+			print('no fire')
+			products = Product.objects
 		mappedProducts = list(map(lambda p: p.serialize(), products))
 		return jsonify(mappedProducts)
 	'''

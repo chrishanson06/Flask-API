@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-search',
@@ -10,7 +11,7 @@ export class SearchComponent implements OnInit {
 
 	searchGroup: FormGroup;
 
-	constructor() {
+	constructor(private router: Router) {
 		this.searchGroup = new FormGroup({
 			search: new FormControl('')
 		});
@@ -21,9 +22,7 @@ export class SearchComponent implements OnInit {
 
 	search(): void {
 		const search = this.searchGroup.get('search')?.value;
-		if (search) {
-			console.log(search);
-		}
+		this.router.navigate(['/'], { queryParams: { s: search } })
 	}
 
 }

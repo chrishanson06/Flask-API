@@ -8,6 +8,7 @@ import { AllProductsComponent } from './all-products/all-products.component';
 import { ProductComponent } from './product/product.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { MatButtonModule } from '@angular/material/button';
 		HttpClientModule,
 
 		MatCardModule,
-		MatButtonModule
+		MatButtonModule,
+		MatProgressSpinnerModule
 	],
 	exports: [
 		AllProductsComponent
