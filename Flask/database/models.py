@@ -53,6 +53,7 @@ class Product(db.Document):
 	sku = db.StringField()
 	price = db.DecimalField(precision=2)
 
+	# Add a text index for more efficient searching
 	meta = {
 		'indexes': [
 			{

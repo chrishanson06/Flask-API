@@ -34,12 +34,14 @@
 							"src/assets"
 						],
 						"styles": [
+							"./node_modules/swagger-ui-dist/swagger-ui.css",
 							"./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
 							"src/styles.scss"
 						],
 						"scripts": [],
 						"allowedCommonJsDependencies": [
-							"socket.io-client"
+							"socket.io-client",
+							"swagger-ui-dist"
 						]
 					},
 					"configurations": {

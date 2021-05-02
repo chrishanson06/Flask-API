@@ -1,5 +1,9 @@
+'''
+Coinbase Endpoints
+'''
+
 from flask import jsonify, request
-from flask_restful import Resource
+from flask_restful_swagger_2 import Resource, swagger
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from coinbase_commerce.error import WebhookInvalidPayload, SignatureVerificationError
@@ -16,6 +20,15 @@ from app import ccClient
 from secret import coinbase_commerce_shared_secret
 
 class CoinbaseChargeApi(Resource):
+	@swagger.doc({
+		'tags': ['Coinbase Commerce'],
+		'description': 'Get the coinbase commerce intent for the hosted_url',
+		'responses': {
+			'200': {
+				'description': 'The coinbase commerce intent',
+			}
+		}
+	})
 	@jwt_required(optional=True)
 	def post(self):
 		data = request.get_json()
@@ -41,6 +54,15 @@ class CoinbaseChargeApi(Resource):
 		return jsonify(charge)
 
 class CoinbaseWebhookApi(Resource):
+	@swagger.doc({
+		'tags': ['Coinbase Commerce'],
+		'description': 'Coinbase Commerce webhook endpoint. Do not use.',
+		'responses': {
+			'200': {
+				'description': 'always'
+			}
+		}
+	})
 	def post(self):
 		payload = request.data.decode('utf-8')
 		signature = request.headers.get('X-CC-Webhook-Signature')
@@ -65,7 +87,7 @@ class CoinbaseWebhookApi(Resource):
 			order.orderStatus = 'failed'
 			order.save()
 		else:
-			return ok, 200
+			return 'ok', 200
 
 		socketio.emit('order ' + str(order.pk), order.orderStatus)
 

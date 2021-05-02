@@ -3,7 +3,7 @@ Auth routes
 '''
 
 from flask import jsonify, request, render_template
-from flask_restful import Resource
+from flask_restful_swagger_2 import Resource, swagger
 from flask_jwt_extended import create_access_token, create_refresh_token, decode_token, jwt_required, get_jwt_identity
 import datetime
 
@@ -16,9 +16,15 @@ from services.mail_service import send_email
 
 
 class SignupApi(Resource):
-	'''
-	Attempt to sign up
-	'''
+	@swagger.doc({
+		'tags': ['auth'],
+		'description': 'Attempt to sign up',
+		'responses': {
+			'200': {
+				'description': 'Signed up'
+			}
+		}
+	})
 	def post(self):
 		try:
 			body = request.get_json()
@@ -39,6 +45,15 @@ class SignupApi(Resource):
 			raise InternalServerError
 
 class LoginApi(Resource):
+	@swagger.doc({
+		'tags': ['auth'],
+		'description': 'Log in',
+		'responses': {
+			'200': {
+				'description': 'Signed up'
+			}
+		}
+	})
 	def post(self):
 		try:
 			body = request.get_json()
@@ -57,9 +72,15 @@ class LoginApi(Resource):
 			raise InternalServerError
 
 class TokenRefresh(Resource):
-	'''
-	Refresh tokens
-	'''
+	@swagger.doc({
+		'tags': ['auth'],
+		'description': 'Refresh tokens',
+		'responses': {
+			'200': {
+				'description': 'Signed up'
+			}
+		}
+	})
 	@jwt_required(refresh=True)
 	def get(self):
 		expires = datetime.timedelta(days=7)
@@ -67,9 +88,15 @@ class TokenRefresh(Resource):
 		return {'accessToken': access_token}, 200
 
 class CheckPassword(Resource):
-	'''
-	Check the password against the token
-	'''
+	@swagger.doc({
+		'tags': ['auth'],
+		'description': 'Check the password against the token',
+		'responses': {
+			'200': {
+				'description': 'Signed up'
+			}
+		}
+	})
 	@jwt_required()
 	def post(self):
 		try:
@@ -85,6 +112,15 @@ class CheckPassword(Resource):
 			raise InternalServerError
 
 class ForgotPassword(Resource):
+	@swagger.doc({
+		'tags': ['auth'],
+		'description': 'Send a forgot password email',
+		'responses': {
+			'200': {
+				'description': 'Signed up'
+			}
+		}
+	})
 	def post(self):
 		url = request.host_url + 'reset/'
 		try:
@@ -115,6 +151,15 @@ class ForgotPassword(Resource):
 			raise InternalServerError
 
 class ResetPassword(Resource):
+	@swagger.doc({
+		'tags': ['auth'],
+		'description': 'Reset a user\'s password',
+		'responses': {
+			'200': {
+				'description': 'Signed up'
+			}
+		}
+	})
 	def post(self):
 		url = request.host_url + 'reset/'
 		try:
@@ -149,9 +194,15 @@ class ResetPassword(Resource):
 			raise InternalServerError
 
 class UserApi(Resource):
-	'''
-	Get the current user
-	'''
+	@swagger.doc({
+		'tags': ['auth'],
+		'description': '',
+		'responses': {
+			'200': {
+				'description': ''
+			}
+		}
+	})
 	@jwt_required()
 	def get(self):
 		try:
@@ -159,11 +210,15 @@ class UserApi(Resource):
 			return jsonify(user.serialize())
 		except Exception:
 			raise InternalServerError
-	'''
-	Edit user
-	BODY
-	 - User
-	'''
+	@swagger.doc({
+		'tags': ['auth'],
+		'description': '',
+		'responses': {
+			'200': {
+				'description': ''
+			}
+		}
+	})
 	@jwt_required()
 	def put(self):
 		try:
@@ -175,9 +230,15 @@ class UserApi(Resource):
 			return 'ok', 200
 		except Exception:
 			raise InternalServerError
-	'''
-	Delete user
-	'''
+	@swagger.doc({
+		'tags': ['auth'],
+		'description': '',
+		'responses': {
+			'200': {
+				'description': ''
+			}
+		}
+	})
 	@jwt_required()
 	def delete(self):
 		try:
