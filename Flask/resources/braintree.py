@@ -3,7 +3,7 @@ Braintree routes
 '''
 
 from flask import jsonify, request
-from flask_restful_swagger_2 import Resource
+from flask_restful_swagger_2 import Resource, swagger
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from resources.errors import InternalServerError
@@ -19,9 +19,20 @@ from app import braintreeGateway
 import json
 
 class BraintreeClientTokenApi(Resource):
-	'''
-	Get the client token
-	'''
+	@swagger.doc({
+		'tags': ['Payment', 'Braintree'],
+		'description': 'Get a Briantree client token',
+		'responses': {
+			'200': {
+				'description': '',
+				'examples': {
+					'application/json': {
+						'clientToken': 'string'
+					}
+				}
+			}
+		}
+	})
 	@jwt_required(optional=True)
 	def get(self):
 		id = get_jwt_identity()
@@ -29,9 +40,40 @@ class BraintreeClientTokenApi(Resource):
 			return { 'clientToken': braintreeGateway.client_token.generate({'customer_id': id}) }
 		else:
 			return { 'clientToken': braintreeGateway.client_token.generate() }
-	'''
-	Post the nonce and pay
-	'''
+	@swagger.doc({
+		'tags': ['Payment', 'Braintree'],
+		'description': 'Post a Braintree nonce and pay',
+		'parameters': [
+			{
+				'name': 'order',
+				'description': 'The id of the order',
+				'in': 'body',
+				'type': 'string',
+				'schema': {
+					'type': 'string'
+				},
+				'required': True
+			},
+			{
+				'name': 'payment_method_nonce',
+				'description': 'A Braintree payment method nonce',
+				'in': 'body',
+				'type': 'object',
+				'schema': None,
+				'required': True
+			},
+		],
+		'responses': {
+			'200': {
+				'description': 'the client secret',
+				'examples': {
+					'application/json': {
+						'clientSecret': 'string'
+					}
+				}
+			}
+		}
+	})
 	@jwt_required(optional=True)
 	def post(self):
 		body = request.get_json()
@@ -76,6 +118,15 @@ class BraintreeClientTokenApi(Resource):
 			raise InternalServerError
 
 class BraintreeWebhookApi(Resource):
+	@swagger.doc({
+		'tags': ['Braintree'],
+		'description': 'Braintree webhook endpoint. Do not use.',
+		'responses': {
+			'200': {
+				'description': 'always'
+			}
+		}
+	})
 	def post(self):
 		webhook_notification = braintreeGateway.webhook_notification.parse(str(request.form['bt_signature']), request.form['bt_payload'])
 

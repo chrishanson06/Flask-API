@@ -17,8 +17,18 @@ from services.mail_service import send_email
 
 class SignupApi(Resource):
 	@swagger.doc({
-		'tags': ['auth'],
+		'tags': ['Auth'],
 		'description': 'Attempt to sign up',
+		'parameters': [
+			{
+				'name': 'User',
+				'description': 'The user object (email and password required)',
+				'in': 'body',
+				'type': 'object',
+				'schema': None,
+				'required': True
+			}
+		],
 		'responses': {
 			'200': {
 				'description': 'Signed up'
@@ -46,11 +56,33 @@ class SignupApi(Resource):
 
 class LoginApi(Resource):
 	@swagger.doc({
-		'tags': ['auth'],
+		'tags': ['Auth'],
 		'description': 'Log in',
+		'parameters': [
+			{
+				'name': 'email',
+				'description': 'The email',
+				'in': 'body',
+				'type': 'string',
+				'schema': {
+					'type': 'string'
+				},
+				'required': True
+			},
+			{
+				'name': 'password',
+				'description': 'The password',
+				'in': 'body',
+				'type': 'string',
+				'schema': {
+					'type': 'string'
+				},
+				'required': True
+			}
+		],
 		'responses': {
 			'200': {
-				'description': 'Signed up'
+				'description': 'The access and refresh tokens',
 			}
 		}
 	})
@@ -73,11 +105,11 @@ class LoginApi(Resource):
 
 class TokenRefresh(Resource):
 	@swagger.doc({
-		'tags': ['auth'],
+		'tags': ['Auth'],
 		'description': 'Refresh tokens',
 		'responses': {
 			'200': {
-				'description': 'Signed up'
+				'description': 'A new access token'
 			}
 		}
 	})
@@ -89,11 +121,11 @@ class TokenRefresh(Resource):
 
 class CheckPassword(Resource):
 	@swagger.doc({
-		'tags': ['auth'],
+		'tags': ['Auth'],
 		'description': 'Check the password against the token',
 		'responses': {
 			'200': {
-				'description': 'Signed up'
+				'description': 'Password is correct'
 			}
 		}
 	})
@@ -113,11 +145,23 @@ class CheckPassword(Resource):
 
 class ForgotPassword(Resource):
 	@swagger.doc({
-		'tags': ['auth'],
+		'tags': ['Auth'],
 		'description': 'Send a forgot password email',
+		'parameters': [
+			{
+				'name': 'email',
+				'description': 'The user\'s email',
+				'in': 'body',
+				'type': 'string',
+				'schema': {
+					'type': 'string'
+				},
+				'required': True
+			}
+		],
 		'responses': {
 			'200': {
-				'description': 'Signed up'
+				'description': 'Email sent'
 			}
 		}
 	})
@@ -152,11 +196,11 @@ class ForgotPassword(Resource):
 
 class ResetPassword(Resource):
 	@swagger.doc({
-		'tags': ['auth'],
+		'tags': ['Auth'],
 		'description': 'Reset a user\'s password',
 		'responses': {
 			'200': {
-				'description': 'Signed up'
+				'description': 'Password reset'
 			}
 		}
 	})
@@ -195,11 +239,11 @@ class ResetPassword(Resource):
 
 class UserApi(Resource):
 	@swagger.doc({
-		'tags': ['auth'],
-		'description': '',
+		'tags': ['Auth', 'User'],
+		'description': 'Get the current user',
 		'responses': {
 			'200': {
-				'description': ''
+				'description': 'The current user'
 			}
 		}
 	})
@@ -211,11 +255,11 @@ class UserApi(Resource):
 		except Exception:
 			raise InternalServerError
 	@swagger.doc({
-		'tags': ['auth'],
-		'description': '',
+		'tags': ['Auth', 'User'],
+		'description': 'Update the current user',
 		'responses': {
 			'200': {
-				'description': ''
+				'description': 'Current user updated.'
 			}
 		}
 	})
@@ -231,11 +275,11 @@ class UserApi(Resource):
 		except Exception:
 			raise InternalServerError
 	@swagger.doc({
-		'tags': ['auth'],
-		'description': '',
+		'tags': ['Auth', 'User'],
+		'description': 'Delete the current user',
 		'responses': {
 			'200': {
-				'description': ''
+				'description': 'User deleted'
 			}
 		}
 	})

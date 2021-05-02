@@ -21,7 +21,7 @@ from secret import coinbase_commerce_shared_secret
 
 class CoinbaseChargeApi(Resource):
 	@swagger.doc({
-		'tags': ['Coinbase Commerce'],
+		'tags': ['Payment', 'Coinbase Commerce'],
 		'description': 'Get the coinbase commerce intent for the hosted_url',
 		'responses': {
 			'200': {

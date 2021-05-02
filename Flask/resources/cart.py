@@ -3,7 +3,7 @@ Cart operation routes
 '''
 
 from flask import jsonify, request
-from flask_restful_swagger_2 import Resource
+from flask_restful_swagger_2 import Resource, swagger
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from mongoengine.errors import FieldDoesNotExist, NotUniqueError, DoesNotExist, ValidationError, InvalidQueryError
@@ -11,20 +11,43 @@ from resources.errors import SchemaValidationError, InternalServerError, Unautho
 
 from database.models import User, Product, CartItem
 
-
-
 class CartApi(Resource):
 	'''
 	Get the current user's cart
 	'''
+	@swagger.doc({
+		'tags': ['Cart'],
+		'description': 'Get the current user\'s cart',
+		'responses': {
+			'200': {
+				'description': 'The users cart',
+			}
+		}
+	})
 	@jwt_required()
 	def get(self):
 		user = User.objects.get(id=get_jwt_identity())
 		products = list(map(lambda p: p.serialize(), user.cart))
 		return jsonify(products)
-	'''
-	Update the current user's cart
-	'''
+	@swagger.doc({
+		'tags': ['Cart'],
+		'description': 'Update the current user\'s cart',
+		'parameters': [
+			{
+				'name': 'cart',
+				'description': 'An array of CartItem',
+				'in': 'body',
+				'type': 'string',
+				'schema': None,
+				'required': True
+			}
+		],
+		'responses': {
+			'200': {
+				'description': 'Cart updated',
+			}
+		}
+	})
 	@jwt_required()
 	def put(self):
 		user = User.objects.get(id=get_jwt_identity())
