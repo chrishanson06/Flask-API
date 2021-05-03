@@ -51,7 +51,7 @@ export class CartService {
 			return;
 		}
 		localStorage.setItem('cart', JSON.stringify(cart));
-		
+
 		this.cartSubject.next(cart);
 
 		const accessToken = localStorage.getItem('accessToken');
@@ -62,7 +62,7 @@ export class CartService {
 			});
 		}
 
-		
+
 	}
 
 	public addToCart(product: Product): void {

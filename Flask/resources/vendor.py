@@ -3,7 +3,7 @@ Vendor routes
 '''
 
 from flask import jsonify, request
-from flask_restful import Resource
+from flask_restful_swagger_2 import Resource, swagger
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from resources.errors import InternalServerError, UnauthorizedError, SchemaValidationError
@@ -11,9 +11,15 @@ from resources.errors import InternalServerError, UnauthorizedError, SchemaValid
 from database.models import Vendor, User
 
 class MyVendorsApi(Resource):
-	'''
-	Get all vendor applications for this user
-	'''
+	@swagger.doc({
+		'tags': ['Vendor'],
+		'description': 'Get all vendor applications',
+		'responses': {
+			'200': {
+				'description': 'Array of Vendor',
+			}
+		}
+	})
 	@jwt_required()
 	def get(self):
 		try:
@@ -22,9 +28,25 @@ class MyVendorsApi(Resource):
 			return jsonify(mappedVendors)
 		except Exception:
 			raise InternalServerError
-	'''
-	Submit a vendor application
-	'''
+	@swagger.doc({
+		'tags': ['Vendor'],
+		'description': 'Submit a vendor application',
+		'parameters': [
+			{
+				'name': 'Vendor',
+				'description': 'A Vendor object',
+				'in': 'body',
+				'type': 'object',
+				'schema': None,
+				'required': False
+			}
+		],
+		'responses': {
+			'200': {
+				'description': 'Vendor application submitted',
+			}
+		}
+	})
 	@jwt_required()
 	def post(self):
 		try:
@@ -38,9 +60,15 @@ class MyVendorsApi(Resource):
 			raise InternalServerError
 
 class MyVendorApi(Resource):
-	'''
-	Get this user's accepted vendor
-	'''
+	@swagger.doc({
+		'tags': ['Vendor'],
+		'description': 'Get this user\'s active store',
+		'responses': {
+			'200': {
+				'description': 'A Vendor object',
+			}
+		}
+	})
 	@jwt_required()
 	def get(self):
 		try:
@@ -48,9 +76,25 @@ class MyVendorApi(Resource):
 			return vendor.serialize()
 		except Exception:
 			raise InternalServerError
-	'''
-	Edit this user's active store
-	'''
+	@swagger.doc({
+		'tags': ['Vendor'],
+		'description': 'Update the current user\'s active store',
+		'parameters': [
+			{
+				'name': 'Vendor',
+				'description': 'A Vendor object',
+				'in': 'body',
+				'type': 'object',
+				'schema': None,
+				'required': False
+			}
+		],
+		'responses': {
+			'200': {
+				'description': 'Store updated',
+			}
+		}
+	})
 	@jwt_required()
 	def put(self):
 		try:
@@ -62,9 +106,15 @@ class MyVendorApi(Resource):
 			return 'ok', 200
 		except Exception:
 			raise InternalServerError
-	'''
-	Deactivate this user's active store
-	'''
+	@swagger.doc({
+		'tags': ['Vendor'],
+		'description': 'Deactivate this user\'s current active store',
+		'responses': {
+			'200': {
+				'description': 'Store deactivated',
+			}
+		}
+	})
 	@jwt_required()
 	def delete(self):
 		try:

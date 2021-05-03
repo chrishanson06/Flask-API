@@ -31,6 +31,7 @@ Included are the app.ini configuration, NGINX example Location config, and a sys
 
 ## Documentations
 
+* API Swagger: available at endpoint `/api/spec.json`
 * [Flask Documentation](https://flask.palletsprojects.com/en/1.1.x/)
 * [Flask-RESTful Documentation](https://flask-restful.readthedocs.io/en/latest/)
 * [Flask-SocketIO Documentation](https://flask-socketio.readthedocs.io/en/latest/)

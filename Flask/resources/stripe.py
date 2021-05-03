@@ -3,7 +3,7 @@ Stripe routes
 '''
 
 from flask import jsonify, request
-from flask_restful import Resource
+from flask_restful_swagger_2 import Resource, swagger
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from resources.errors import InternalServerError
@@ -19,9 +19,32 @@ import os
 import stripe
 
 class PaymentIntentApi(Resource):
-	'''
-	Create payment intent
-	'''
+	@swagger.doc({
+		'tags': ['Payment', 'Stripe'],
+		'description': 'Get a Stripe client secret',
+		'parameters': [
+			{
+				'name': 'order',
+				'description': 'The id of the order',
+				'in': 'body',
+				'type': 'string',
+				'schema': {
+					'type': 'string'
+				},
+				'required': True
+			}			
+		],
+		'responses': {
+			'200': {
+				'description': 'the client secret',
+				'examples': {
+					'application/json': {
+						'clientSecret': 'string'
+					}
+				}
+			}
+		}
+	})
 	@jwt_required(optional=True)
 	def post(self):
 		try:
@@ -55,6 +78,15 @@ class PaymentIntentApi(Resource):
 			raise InternalServerError
 
 class StripeApi(Resource):
+	@swagger.doc({
+		'tags': ['Stripe'],
+		'description': 'Stripe webhook endpoint. Do not use.',
+		'responses': {
+			'200': {
+				'description': 'always'
+			}
+		}
+	})
 	def post(self):
 		payload = request.get_json()
 		event = None

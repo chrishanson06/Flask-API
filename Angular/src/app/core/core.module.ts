@@ -22,11 +22,12 @@ import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProductModule } from '../product/product.module';
 import { CartModule } from '../payment/cart/cart.module';
+import { SwaggerComponent } from './swagger/swagger.component';
 
 
 
 @NgModule({
-	declarations: [NavComponent, LandingComponent, SearchComponent],
+	declarations: [NavComponent, LandingComponent, SearchComponent, SwaggerComponent],
 	imports: [
 		CommonModule,
 		RouterModule,

@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -17,13 +17,14 @@ export class ProductService {
 
 	constructor(private http: HttpClient) { }
 
-	public getAllProducts(): Observable<Product[]> {
+	public getAllProducts(search?: string): Observable<Product[]> {
 		const accessToken = localStorage.getItem('accessToken');
+		const params = new HttpParams().append('s', search ? search : '');
 		if (accessToken) {
 			const headers = new HttpHeaders().append('Authorization', 'Bearer ' + accessToken);
-			return this.http.get<Product[]>(this.productBase + 'products', { headers });
+			return this.http.get<Product[]>(this.productBase + 'products', { headers, params });
 		} else {
-			return this.http.get<Product[]>(this.productBase + 'products');
+			return this.http.get<Product[]>(this.productBase + 'products', { params });
 		}
 	}
 

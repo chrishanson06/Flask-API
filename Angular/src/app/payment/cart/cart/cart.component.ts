@@ -56,7 +56,7 @@ export class CartComponent implements OnInit, OnDestroy {
 		} else {
 			this.subs.push(this.cartService.cart$.subscribe(cart => {
 				this.products = cart;
-			}))
+			}));
 		}
 	}
 

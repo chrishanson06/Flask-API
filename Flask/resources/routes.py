@@ -14,6 +14,8 @@ from .product import ProductsApi, ProductApi
 from .order import OrdersApi, OrderApi
 from .cart import CartApi
 
+from .vendor import MyVendorsApi, MyVendorApi
+
 import resources.sockets
 
 from .admin import AdminApi, AdminUsersApi, AdminUserApi, AdminOrdersApi, AdminOrderApi
@@ -40,6 +42,9 @@ def initialize_routes(api, base):
 	api.add_resource(OrderApi, base + 'order/order/<id>')
 
 	api.add_resource(CartApi, base + 'cart/cart')
+
+	api.add_resource(MyVendorsApi, base + 'vendor/vendors')
+	api.add_resource(MyVendorApi, base + 'vendor/vendor')
 
 	api.add_resource(AdminApi, base + 'admin/admin')
 	api.add_resource(AdminUsersApi, base + 'admin/users')

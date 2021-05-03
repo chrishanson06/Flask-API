@@ -1,5 +1,9 @@
+'''
+File Endpoints
+'''
+
 from flask import jsonify, request, url_for, current_app
-from flask_restful import Resource
+from flask_restful_swagger_2 import Resource, swagger
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from werkzeug.utils import secure_filename
@@ -17,6 +21,25 @@ class UploaderApi(Resource):
 	'''
 	Upload file and return it's filename
 	'''
+	@swagger.doc({
+		'tags': ['File IO'],
+		'description': 'Upload a file to this users media folder.',
+		'parameters': [
+			{
+				'name': 'file',
+				'description': 'The file to upload.',
+				'in': 'body',
+				'type': 'file',
+				'schema': None,
+				'required': True
+			}
+		],
+		'responses': {
+			'200': {
+				'description': 'The location of the file',
+			}
+		}
+	})
 	@jwt_required()
 	def post(self):
 		try:
@@ -57,9 +80,15 @@ class UploaderApi(Resource):
 			raise InternalServerError
 
 class MediaApi(Resource):
-	'''
-	Get all media urls belonging to user
-	'''
+	@swagger.doc({
+		'tags': ['File IO'],
+		'description': 'Get all media urls belonging to user',
+		'responses': {
+			'200': {
+				'description': 'An array of file locations',
+			}
+		}
+	})
 	@jwt_required()
 	def get(self):
 		mediaPath = os.path.join(current_app.config['UPLOAD_FOLDER'], get_jwt_identity())
@@ -70,9 +99,25 @@ class MediaApi(Resource):
 		return ''
 
 class SingleMediaApi(Resource):
-	'''
-	Delete file with according file name
-	'''
+	@swagger.doc({
+		'tags': ['File IO'],
+		'description': 'Delete file according to filename',
+		'parameters': [
+			{
+				'name': 'Filename',
+				'description': 'The filename',
+				'in': 'path',
+				'type': 'string',
+				'schema': None,
+				'required': True
+			}
+		],
+		'responses': {
+			'200': {
+				'description': 'File deleted',
+			}
+		}
+	})
 	@jwt_required()
 	def delete(self, filename):
 		try:

@@ -3,7 +3,7 @@ Order routes
 '''
 
 from flask import jsonify, request
-from flask_restful import Resource
+from flask_restful_swagger_2 import Resource, swagger
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from mongoengine.errors import FieldDoesNotExist, NotUniqueError, DoesNotExist, ValidationError, InvalidQueryError
@@ -12,17 +12,39 @@ from resources.errors import SchemaValidationError, InternalServerError, Unautho
 from database.models import Order, CartItem, Product, User
 
 class OrdersApi(Resource):
-	'''
-	Get all orders according to search criteria
-	'''
+	@swagger.doc({
+		'tags': ['Order'],
+		'description': 'Get all orders according to search criteria',
+		'responses': {
+			'200': {
+				'description': 'Array of Orders',
+			}
+		}
+	})
 	@jwt_required()
 	def get(self):
 		orders = Order.objects
 		mappedOrders = list(map(lambda p: p.serialize(), orders))
 		return jsonify(mappedOrders)
-	'''
-	Add new order
-	'''
+	@swagger.doc({
+		'tags': ['Order'],
+		'description': 'Add new product',
+		'parameters': [
+			{
+				'name': 'products',
+				'description': 'A list of CartItem',
+				'in': 'body',
+				'type': 'object',
+				'schema': None,
+				'required': True
+			}
+		],
+		'responses': {
+			'200': {
+				'description': 'Order added',
+			}
+		}
+	})
 	@jwt_required(optional=True)
 	def post(self):
 		try:
@@ -45,9 +67,24 @@ class OrdersApi(Resource):
 
 
 class OrderApi(Resource):
-	'''
-	Get the order. Orders with non signed in users are only presented the order status for shipping concerns.
-	'''
+	@swagger.doc({
+		'tags': ['Order'],
+		'description': 'Get the order. Orders with non signed in users are only presented the order status for shipping concerns.',
+		'parameters': [
+			{
+				'name': 'id',
+				'description': 'The item id',
+				'in': 'path',
+				'type': 'string',
+				'required': True
+			}
+		],
+		'responses': {
+			'200': {
+				'description': 'The order',
+			}
+		}
+	})
 	@jwt_required(optional=True)
 	def get(self, id):
 		if (get_jwt_identity()):

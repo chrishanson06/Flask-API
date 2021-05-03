@@ -42,7 +42,7 @@ class User(db.Document):
 		return {
 			'id': str(self.pk),
 			'email': self.email,
-			'admin': self.admin,
+			'admin': True if self.admin else False,
 			'cart': mappedCart,
 			'isVendor': self.isVendor
 		}
@@ -70,12 +70,23 @@ class Vendor(db.Document):
 
 class Product(db.Document):
 	name = db.StringField()
-	slug = db.StringField()
+	slug = db.StringField(unique=True)
 	vendor = db.ReferenceField('Vendor')
 	description = db.StringField()
 	shortDescription = db.StringField()
 	sku = db.StringField()
 	price = db.DecimalField(precision=2)
+
+	# Add a text index for more efficient searching
+	meta = {
+		'indexes': [
+			{
+				'fields': ['$name', '$description'],
+				'default_language': 'english',
+				'weights': { 'name': 10, 'description': 2 }
+			}
+		]
+	}
 
 	def serialize(self):
 		return {
@@ -106,5 +117,6 @@ class Order(db.Document):
 			'orderer': orderer,
 			'orderStatus': self.orderStatus,
 			'products': mappedProducts,
-			'addresses': self.addresses
+			'addresses': self.addresses,
+			'createdAt': self.createdAt
 		}

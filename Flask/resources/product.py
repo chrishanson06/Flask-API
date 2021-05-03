@@ -3,7 +3,7 @@ Product routes
 '''
 
 from flask import jsonify, request
-from flask_restful import Resource
+from flask_restful_swagger_2 import Resource, swagger
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from mongoengine.errors import FieldDoesNotExist, NotUniqueError, DoesNotExist, ValidationError, InvalidQueryError
@@ -12,16 +12,52 @@ from resources.errors import SchemaValidationError, InternalServerError, Unautho
 from database.models import Product, User
 
 class ProductsApi(Resource):
-	'''
-	Get all products according to search criteria
-	'''
+	@swagger.doc({
+		'tags': ['Product'],
+		'description': 'Get all products according to search criteria',
+		'parameters': [
+			{
+				'name': 's',
+				'description': 'The search term',
+				'in': 'query',
+				'type': 'string',
+				'required': False
+			}
+		],
+		'responses': {
+			'200': {
+				'description': 'Array of Product',
+			}
+		}
+	})
 	def get(self):
-		products = Product.objects
+		search = request.args.get('s')
+		print(search)
+		if search:
+			products = Product.objects.search_text(search).order_by('$text_score')
+		else:
+			products = Product.objects
 		mappedProducts = list(map(lambda p: p.serialize(), products))
 		return jsonify(mappedProducts)
-	'''
-	Add new product
-	'''
+	@swagger.doc({
+		'tags': ['Product'],
+		'description': 'Add new product',
+		'parameters': [
+			{
+				'name': 'Product',
+				'description': 'A product object',
+				'in': 'body',
+				'type': 'object',
+				'schema': None,
+				'required': True
+			}
+		],
+		'responses': {
+			'200': {
+				'description': 'Product added',
+			}
+		}
+	})
 	@jwt_required()
 	def post(self):
 		try:
@@ -41,15 +77,45 @@ class ProductsApi(Resource):
 
 
 class ProductApi(Resource):
-	'''
-	Get the product
-	'''
+	@swagger.doc({
+		'tags': ['Product'],
+		'description': 'Get the product',
+		'parameters': [
+			{
+				'name': 'id',
+				'description': 'The item id',
+				'in': 'path',
+				'type': 'string',
+				'required': True
+			}
+		],
+		'responses': {
+			'200': {
+				'description': 'The product',
+			}
+		}
+	})
 	def get(self, id):
 		product = Product.objects.get(id=id)
 		return jsonify(product.serialize())
-	'''
-	Update product
-	'''
+	@swagger.doc({
+		'tags': ['Product'],
+		'description': 'Update the product',
+		'parameters': [
+			{
+				'name': 'id',
+				'description': 'The item id',
+				'in': 'path',
+				'type': 'string',
+				'required': True
+			}
+		],
+		'responses': {
+			'200': {
+				'description': 'Product updated',
+			}
+		}
+	})
 	@jwt_required()
 	def put(self, id):
 		try:
@@ -65,9 +131,24 @@ class ProductApi(Resource):
 			raise UnauthorizedError
 		except Exception:
 			raise InternalServerError       
-	'''
-	Delete product
-	'''
+	@swagger.doc({
+		'tags': ['Product'],
+		'description': 'Delete the product',
+		'parameters': [
+			{
+				'name': 'id',
+				'description': 'The item id',
+				'in': 'path',
+				'type': 'string',
+				'required': True
+			}
+		],
+		'responses': {
+			'200': {
+				'description': 'Product deleted',
+			}
+		}
+	})
 	@jwt_required()
 	def delete(self, id):
 		try:

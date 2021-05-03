@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 interface Intent {
 	clientSecret?: string;
 	hosted_url?: string;
-	clientToken?: string
+	clientToken?: string;
 }
 
 interface CountryPair {
@@ -32,7 +32,7 @@ interface Id {
 export class CheckoutComponent implements OnInit {
 
 	stripe: stripe.Stripe;
-	products: CartItem[]
+	products: CartItem[];
 	stripeIntent: Intent | null;
 	coinbaseIntent: Intent | null;
 
@@ -48,7 +48,7 @@ export class CheckoutComponent implements OnInit {
 	filteredCountries2: Observable<CountryPair[]>;
 
 	cantEdit: boolean;
-	
+
 	private orderID: string;
 
 	constructor(private http: HttpClient, private cartService: CartService, private router: Router) {
@@ -87,7 +87,7 @@ export class CheckoutComponent implements OnInit {
 			phoneNumber: new FormControl('', [Validators.required])
 		});
 
-		this.countries = []
+		this.countries = [];
 		const countryControl = this.addressForm.get('country');
 		const countryControl2 = this.billingForm.get('country');
 		if (countryControl && countryControl2) {
@@ -113,11 +113,6 @@ export class CheckoutComponent implements OnInit {
 		this.cartService.getCart().toPromise().then(cart => {
 			this.products = cart;
 		});
-	}
-
-	private _filter(value: string): CountryPair[] {
-		const filterValue = value.toLowerCase();
-		return this.countries.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
 	}
 
 	generateIntents(): void {
@@ -148,7 +143,7 @@ export class CheckoutComponent implements OnInit {
 					const card = elements.create('card', { style });
 					card.mount('#card-element');
 
-					card.on('change', function (event) {
+					card.on('change', function(event) {
 						// Disable the Pay button if there are no card details in the Element
 						const button = document.querySelector('button');
 						const cardError = document.querySelector('#card-error');
@@ -247,7 +242,7 @@ export class CheckoutComponent implements OnInit {
 			const addresses = this.getAddressDetails();
 			this.stripe.confirmCardPayment(clientSecret, {
 				payment_method: {
-					card: card,
+					card,
 				}
 			}).then((result: any) => {
 				if (result.error) {
@@ -326,8 +321,13 @@ export class CheckoutComponent implements OnInit {
 				zip: this.billingForm.get('zip')?.value,
 				phoneNumber: this.billingForm.get('phoneNumber')?.value
 			}
-		}
+		};
 		return addresses;
+	}
+
+	private _filter(value: string): CountryPair[] {
+		const filterValue = value.toLowerCase();
+		return this.countries.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
 	}
 
 }
