@@ -4,6 +4,7 @@ import { AdminGuard } from './admin/admin.guard';
 import { AuthGuard } from './auth/auth.guard';
 import { LandingComponent } from './core/landing/landing.component';
 import { SwaggerComponent } from './core/swagger/swagger.component';
+import { VendorGuard } from './vendor/vendor.guard';
 
 const routes: Routes = [
 	{
@@ -20,9 +21,9 @@ const routes: Routes = [
 		canActivate: [AuthGuard]
 	},
 	{
-		path: 'dashboard',
-		loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule),
-		canActivate: [AuthGuard]
+		path: 'vendor',
+		loadChildren: () => import('./vendor/vendor.module').then(m => m.VendorModule),
+		canActivate: [AuthGuard, VendorGuard]
 	},
 	{
 		path: 'cart',

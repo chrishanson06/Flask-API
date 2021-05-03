@@ -4,7 +4,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 
 const routes: Routes = [
 	{
-		path: '',
+		path: 'dashboard',
 		component: DashboardComponent
 	}
 ];
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class DashboardRoutingModule { }
+export class VendorRoutingModule { }
