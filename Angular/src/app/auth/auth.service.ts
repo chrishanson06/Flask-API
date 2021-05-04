@@ -129,7 +129,11 @@ export class AuthService {
 
 	public setUser(user: User | null): void {
 		this.userSubject.next(user);
-		localStorage.setItem('user', JSON.stringify(user));
+		if (user) {
+			localStorage.setItem('user', JSON.stringify(user));
+		} else {
+			localStorage.removeItem('user');
+		}
 	}
 
 }
