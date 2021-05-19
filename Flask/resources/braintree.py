@@ -8,7 +8,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from resources.errors import InternalServerError
 
-from resources.utils import calculate_order_amount
+from services.utils import calculate_order_amount
 
 from database.models import Order
 

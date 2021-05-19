@@ -34,12 +34,13 @@ export class AuthService {
 			this.setUser(JSON.parse(cachedUser));
 		}
 		this.refresh().toPromise().then(tokens => {
-			this.setTokens(tokens.accessToken);
+			this.setTokens(false, tokens.accessToken);
 			this.getUser().toPromise().then(res => {
 				this.setUser(res);
 			}).catch(err => {
 				this.setUser(null);
 				localStorage.removeItem('accessToken');
+				localStorage.removeItem('refreshToken');
 				console.error('Error fetching user (token expiration error): ' + err);
 			});
 			setInterval(() =>
@@ -83,18 +84,20 @@ export class AuthService {
 		}
 	}
 
-	public setTokens(accessToken: string, refreshToken?: string): void {
+	public setTokens(refreshSocket: boolean, accessToken: string, refreshToken?: string): void {
 		localStorage.setItem('accessToken', accessToken);
 		if (refreshToken) {
 			localStorage.setItem('refreshToken', refreshToken);
 		}
-		this.ws.killSocket();
-		const socket = io(environment.socketServer, {
-			extraHeaders: {
-				Authorization: 'Bearer ' + localStorage.getItem('accessToken')
-			}
-		});
-		this.ws.setSocket(socket);
+		if (refreshSocket) {
+			this.ws.killSocket();
+			const socket = io(environment.socketServer, {
+				extraHeaders: {
+					Authorization: 'Bearer ' + localStorage.getItem('accessToken')
+				}
+			});
+			this.ws.setSocket(socket);
+		}
 	}
 
 	public getUser(): Observable<User> {

@@ -12,7 +12,7 @@ from coinbase_commerce.webhook import Webhook
 from database.models import Order
 
 from app import socketio
-from resources.utils import calculate_order_amount
+from services.utils import calculate_order_amount
 
 import json
 

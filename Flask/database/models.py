@@ -53,13 +53,16 @@ class Product(db.Document):
 	sku = db.StringField()
 	price = db.DecimalField(precision=2)
 
+	nameNgrams = db.StringField()
+	namePrefixNgrams = db.StringField()
+
 	# Add a text index for more efficient searching
 	meta = {
 		'indexes': [
 			{
-				'fields': ['$name', '$description'],
+				'fields': ['$nameNgrams', '$namePrefixNgrams'],
 				'default_language': 'english',
-				'weights': { 'name': 10, 'description': 2 }
+				'weights': { 'nameNgrams': 100, 'namePrefixNgrams': 200 }
 			}
 		]
 	}

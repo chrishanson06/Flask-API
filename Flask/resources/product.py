@@ -10,6 +10,7 @@ from mongoengine.errors import FieldDoesNotExist, NotUniqueError, DoesNotExist, 
 from resources.errors import SchemaValidationError, InternalServerError, UnauthorizedError
 
 from database.models import Product, User
+from services.utils import make_ngrams
 
 class ProductsApi(Resource):
 	@swagger.doc({
@@ -65,6 +66,8 @@ class ProductsApi(Resource):
 			if not user.admin:
 				raise UnauthorizedError
 			product = Product(**request.get_json())
+			product.nameNgrams = u' '.join(make_ngrams(product.name))
+			product.namePrefixNgrams = u' '.join(make_ngrams(product.name, True))
 			product.save()
 			id = product.id
 			return {'id': str(id)}, 200
@@ -124,6 +127,9 @@ class ProductApi(Resource):
 				raise UnauthorizedError
 			product = Product.objects.get(id=id)
 			product.update(**request.get_json())
+			product.nameNgrams = u' '.join(make_ngrams(product.name))
+			product.namePrefixNgrams = u' '.join(make_ngrams(product.name, True))
+			product.save()
 			return 'ok', 200
 		except InvalidQueryError:
 			raise SchemaValidationError
