@@ -23,11 +23,13 @@ import { SwaggerComponent } from './swagger/swagger.component';
 import { WebsocketService } from './services/websocket.service';
 import { RecaptchaV3Module, RECAPTCHA_V3_SITE_KEY } from 'ng-recaptcha';
 import { MatCardModule } from '@angular/material/card';
+import { LoaderComponent } from './loader/loader.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 
 @NgModule({
-	declarations: [NavComponent, LandingComponent, SwaggerComponent],
+	declarations: [NavComponent, LandingComponent, SwaggerComponent, LoaderComponent],
 	imports: [
 		CommonModule,
 		RouterModule,
@@ -47,7 +49,9 @@ import { MatCardModule } from '@angular/material/card';
 		MatListModule,
 		MatFormFieldModule,
 		MatInputModule,
-		MatCardModule
+		MatCardModule,
+		MatProgressSpinnerModule
+		
 	],
 	providers: [
 		{
